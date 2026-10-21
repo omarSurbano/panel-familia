@@ -26,10 +26,10 @@
     gap: 12px;
   }
 
-  /* Fila superior: reloj + clima */
+  /* Fila superior: reloj + clima + carita */
   .top-row {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto; /* Carita, Reloj, Clima */
     align-items: center;
     gap: 20px;
     background: linear-gradient(135deg, #1a2332 0%, #141b26 100%);
@@ -38,24 +38,86 @@
     border: 1px solid #253142;
   }
 
+  /* --- LA CARITA CSS --- */
+  .face-container {
+    width: 90px;
+    height: 90px;
+    background: #facc15; /* Amarillo */
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1);
+  }
+  .eyes {
+    display: flex;
+    gap: 18px;
+    position: absolute;
+    top: 28px;
+  }
+  .eye {
+    width: 10px;
+    height: 16px;
+    background: #1a2332;
+    border-radius: 50%;
+    /* Animación de pestañeo */
+    animation: blink 4s infinite; 
+    transform-origin: center;
+  }
+  .mouth {
+    width: 30px;
+    height: 10px;
+    background: #1a2332;
+    border-radius: 0 0 30px 30px;
+    position: absolute;
+    bottom: 22px;
+    transition: all 0.2s ease;
+  }
+  /* Cuando habla, la boca se hace un círculo */
+  .face-container.speaking .mouth {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    bottom: 18px;
+    animation: talk 0.3s infinite alternate;
+  }
+
+  @keyframes blink {
+    0%, 96%, 100% { transform: scaleY(1); }
+    98% { transform: scaleY(0.1); }
+  }
+  @keyframes talk {
+    0% { height: 15px; }
+    100% { height: 25px; }
+  }
+
+  /* --- RELOJ --- */
+  .clock-block { text-align: center; }
   .clock-block .clock {
-    font-size: 92px;
+    font-size: 85px;
     font-weight: 300;
     letter-spacing: -2px;
     line-height: 1;
     color: #ffffff;
     font-variant-numeric: tabular-nums;
   }
+  .clock-block .clock .seconds {
+    font-size: 40px;
+    color: #6b87a8;
+  }
   .clock-block .date {
-    font-size: 22px;
+    font-size: 20px;
     color: #8aa2bd;
     margin-top: 6px;
     text-transform: capitalize;
   }
 
+  /* --- CLIMA --- */
   .weather-block {
     text-align: right;
-    min-width: 180px;
+    min-width: 160px;
   }
   .weather-block .temp {
     font-size: 58px;
@@ -173,18 +235,17 @@
 
   /* ============ RESPONSIVE ============ */
   @media (max-width: 800px) {
-    .clock-block .clock { font-size: 64px; }
+    .clock-block .clock { font-size: 60px; }
+    .clock-block .clock .seconds { font-size: 30px; }
     .clock-block .date { font-size: 16px; }
     .weather-block .temp { font-size: 42px; }
     .weather-block { min-width: 130px; }
     .event-title { font-size: 15px; }
     .notes-area { font-size: 15px; }
-  }
-  @media (max-height: 480px) {
-    .panel { padding: 8px; gap: 8px; }
-    .top-row { padding: 10px 16px; }
-    .clock-block .clock { font-size: 58px; }
-    .weather-block .temp { font-size: 38px; }
+    .face-container { width: 70px; height: 70px; }
+    .eyes { top: 20px; gap: 14px; }
+    .eye { width: 8px; height: 12px; }
+    .mouth { bottom: 16px; width: 24px; height: 8px; }
   }
 </style>
 </head>
@@ -192,12 +253,23 @@
 
 <div class="panel">
 
-  <!-- Fila superior: reloj y clima -->
+  <!-- Fila superior: carita + reloj + clima -->
   <div class="top-row">
+    
+    <!-- Carita Animada -->
+    <div class="face-container" id="face">
+      <div class="eyes">
+        <div class="eye"></div>
+        <div class="eye"></div>
+      </div>
+      <div class="mouth"></div>
+    </div>
+
     <div class="clock-block">
-      <div class="clock" id="clock">--:--</div>
+      <div class="clock" id="clock">--:--<span class="seconds">:--</span></div>
       <div class="date" id="date">cargando...</div>
     </div>
+
     <div class="weather-block">
       <div class="temp"><span id="temp">--</span><span class="unit">°C</span></div>
       <div class="desc" id="weather-desc">Cargando clima...</div>
@@ -233,21 +305,19 @@
    CONFIGURACIÓN — Edita estos valores con tus datos
    ============================================================ */
 
-// URL pública ICS de Zoho, pasada por un proxy (AllOrigins) para evitar bloqueos CORS
-var ICS_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://calendar.zoho.eu/ical/0801124aaacfb956572a96ba7aff45bc0000299d45a5771512967b2d8f19afec8253e8336b5ce1ce89cf81f6dc8b643ac7f8e1cf49b45c1ca4245a0ef6cd28a117efee958e7a652117409e68ad41');
+// URL pública ICS de Zoho, pasada por un proxy (Codetabs)
+var ICS_URL = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://calendar.zoho.eu/ical/0801124aaacfb956572a96ba7aff45bc0000299d45a5771512967b2d8f19afec8253e8336b5ce1ce89cf81f6dc8b643ac7f8e1cf49b45c1ca4245a0ef6cd28a117efee958e7a652117409e68ad41');
 
 // Coordenadas exactas de Luserna San Giovanni
 var LAT = 44.8150;
 var LON = 7.2450;
-
-// Nombre de la ciudad (solo informativo, aparece en la interfaz)
 var CIUDAD = 'Luserna San Giovanni';
 
 // Minutos antes del evento para avisar por voz
 var AVISO_MIN = 15;
 
 /* ============================================================
-   FIN DE CONFIGURACIÓN — No hace falta tocar nada más abajo
+   FIN DE CONFIGURACIÓN
    ============================================================ */
 
 // ---------- Utilidades de fecha en español ----------
@@ -265,22 +335,22 @@ function fechaLarga(d) {
 // ---------- Reloj y fecha ----------
 function actualizarReloj() {
   var ahora = new Date();
-  document.getElementById('clock').textContent = pad(ahora.getHours()) + ':' + pad(ahora.getMinutes());
+  var h = pad(ahora.getHours());
+  var m = pad(ahora.getMinutes());
+  var s = pad(ahora.getSeconds());
+  document.getElementById('clock').innerHTML = h + ':' + m + '<span class="seconds">:' + s + '</span>';
   document.getElementById('date').textContent = fechaLarga(ahora);
 }
 
 // ---------- Clima (Open-Meteo) ----------
-// Mapa de weather_code WMO a descripción en español
 var WMO_CODES = {
-  0: 'Cielo despejado',
-  1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado',
+  0: 'Cielo despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado',
   45: 'Niebla', 48: 'Niebla con escarcha',
   51: 'Llovizna ligera', 53: 'Llovizna', 55: 'Llovizna intensa',
   56: 'Llovizna helada', 57: 'Llovizna helada intensa',
   61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia intensa',
   66: 'Lluvia helada', 67: 'Lluvia helada intensa',
-  71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve intensa',
-  77: 'Granizo',
+  71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve intensa', 77: 'Granizo',
   80: 'Chubascos ligeros', 81: 'Chubascos', 82: 'Chubascos fuertes',
   85: 'Chubascos de nieve', 86: 'Chubascos de nieve intensos',
   95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte con granizo'
@@ -297,58 +367,32 @@ function actualizarClima() {
     .then(function(data) {
       if (!data || !data.current_weather) throw new Error('Datos inválidos');
       var w = data.current_weather;
-      var temp = Math.round(w.temperature);
-      var desc = WMO_CODES[w.weathercode] || 'Sin datos';
-      document.getElementById('temp').textContent = temp;
-      document.getElementById('weather-desc').textContent = desc;
+      document.getElementById('temp').textContent = Math.round(w.temperature);
+      document.getElementById('weather-desc').textContent = WMO_CODES[w.weathercode] || 'Sin datos';
       document.getElementById('city-name').textContent = CIUDAD;
     })
     .catch(function(err) {
-      console.warn('Error clima:', err);
       document.getElementById('temp').textContent = '--';
       document.getElementById('weather-desc').textContent = 'Sin datos';
-      document.getElementById('city-name').textContent = CIUDAD;
     });
 }
 
 // ---------- Parseo de ICS ----------
-// Convierte una cadena DTSTART de ICS a un objeto Date
-// Soporta: 20261022T100000Z (UTC), 20261022T100000 (local), 20261022 (todo el día)
 function parseICSDate(str, params) {
   if (!str) return null;
   str = str.trim();
-  var allDay = false;
-
-  // Formato fecha completa (todo el día): YYYYMMDD
   if (str.length === 8 && str.indexOf('T') === -1) {
-    allDay = true;
-    var y = parseInt(str.substr(0, 4), 10);
-    var m = parseInt(str.substr(4, 2), 10) - 1;
-    var d = parseInt(str.substr(6, 2), 10);
-    return { date: new Date(y, m, d), allDay: true };
+    return { date: new Date(parseInt(str.substr(0,4),10), parseInt(str.substr(4,2),10)-1, parseInt(str.substr(6,2),10)), allDay: true };
   }
-
-  // Formato con hora: YYYYMMDDTHHMMSS[Z]
   if (str.length >= 15 && str.charAt(8) === 'T') {
-    var y2 = parseInt(str.substr(0, 4), 10);
-    var m2 = parseInt(str.substr(4, 2), 10) - 1;
-    var d2 = parseInt(str.substr(6, 2), 10);
-    var hh = parseInt(str.substr(9, 2), 10);
-    var mm = parseInt(str.substr(11, 2), 10);
-    var ss = parseInt(str.substr(13, 2), 10);
-
-    if (str.charAt(str.length - 1) === 'Z') {
-      // UTC
-      return { date: new Date(Date.UTC(y2, m2, d2, hh, mm, ss)), allDay: false };
-    } else {
-      // Hora local (sin Z)
-      return { date: new Date(y2, m2, d2, hh, mm, ss), allDay: false };
-    }
+    var y = parseInt(str.substr(0,4),10), m = parseInt(str.substr(4,2),10)-1, d = parseInt(str.substr(6,2),10);
+    var hh = parseInt(str.substr(9,2),10), mm = parseInt(str.substr(11,2),10), ss = parseInt(str.substr(13,2),10);
+    if (str.charAt(str.length - 1) === 'Z') return { date: new Date(Date.UTC(y, m, d, hh, mm, ss)), allDay: false };
+    return { date: new Date(y, m, d, hh, mm, ss), allDay: false };
   }
   return null;
 }
 
-// Despliega las líneas "folded" del ICS (líneas que empiezan con espacio o tab son continuación)
 function unfoldICS(text) {
   return text.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
 }
@@ -358,46 +402,23 @@ function parsearICS(texto) {
   var lines = unfoldICS(texto).split('\n');
   var dentro = false;
   var actual = {};
-
   for (var i = 0; i < lines.length; i++) {
     var linea = lines[i];
-    if (linea === 'BEGIN:VEVENT') {
-      dentro = true;
-      actual = {};
-      continue;
-    }
+    if (linea === 'BEGIN:VEVENT') { dentro = true; actual = {}; continue; }
     if (linea === 'END:VEVENT') {
-      if (actual.start && actual.summary) {
-        eventos.push(actual);
-      }
-      dentro = false;
-      continue;
+      if (actual.start && actual.summary) eventos.push(actual);
+      dentro = false; continue;
     }
     if (!dentro) continue;
-
-    // Ignorar eventos cancelados
-    if (linea.indexOf('STATUS:CANCELLED') === 0) {
-      actual.cancelado = true;
-      continue;
-    }
-
-    // DTSTART con posibles parámetros: DTSTART;VALUE=DATE:20261022 o DTSTART:20261022T100000Z
+    if (linea.indexOf('STATUS:CANCELLED') === 0) { actual.cancelado = true; continue; }
     if (linea.indexOf('DTSTART') === 0) {
       var partes = linea.split(':');
-      var cabecera = partes[0];
-      var valor = partes.slice(1).join(':');
-      var esTodoDia = cabecera.indexOf('VALUE=DATE') !== -1;
-      var parsed = parseICSDate(valor, cabecera);
-      if (parsed) {
-        actual.start = parsed.date;
-        actual.allDay = parsed.allDay || esTodoDia;
-      }
+      var parsed = parseICSDate(partes.slice(1).join(':'));
+      if (parsed) { actual.start = parsed.date; actual.allDay = parsed.allDay; }
       continue;
     }
-
     if (linea.indexOf('SUMMARY:') === 0) {
-      actual.summary = linea.substr(8).trim()
-        .replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/gi, ' ').replace(/\\\\/g, '\\');
+      actual.summary = linea.substr(8).trim().replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/gi, ' ');
       continue;
     }
   }
@@ -407,89 +428,55 @@ function parsearICS(texto) {
 var eventosCache = [];
 
 function cargarCalendario() {
-  if (!ICS_URL || ICS_URL.indexOf('XXXX') === 0) {
-    document.getElementById('events-list').innerHTML =
-      '<li class="empty">Configura ICS_URL en el script</li>';
-    return;
-  }
+  if (!ICS_URL || ICS_URL.indexOf('XXXX') === 0) return;
   fetch(ICS_URL, { cache: 'no-store' })
-    .then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.text();
-    })
+    .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
     .then(function(texto) {
-      var eventos = parsearICS(texto);
-      // Filtrar cancelados
-      eventos = eventos.filter(function(e) { return !e.cancelado; });
-      // Ordenar por fecha
-      eventos.sort(function(a, b) { return a.start - b.start; });
-      eventosCache = eventos;
+      eventosCache = parsearICS(texto).filter(function(e) { return !e.cancelado; });
+      eventosCache.sort(function(a, b) { return a.start - b.start; });
       renderizarEventos();
       comprobarAvisos();
     })
     .catch(function(err) {
-      console.warn('Error ICS:', err);
-      document.getElementById('events-list').innerHTML =
-        '<li class="empty">No se pudo cargar el calendario</li>';
+      document.getElementById('events-list').innerHTML = '<li class="empty">No se pudo cargar el calendario</li>';
     });
 }
 
 function renderizarEventos() {
   var lista = document.getElementById('events-list');
   var ahora = new Date();
-  // Mostrar próximos 6 eventos desde "ahora" (incluyendo los de hoy que no hayan pasado si son todo el día)
   var proximos = [];
   for (var i = 0; i < eventosCache.length; i++) {
     var ev = eventosCache[i];
     var fin = new Date(ev.start.getTime());
-    if (ev.allDay) {
-      fin.setHours(23, 59, 59, 999);
-    } else {
-      // Asumimos duración de 1h si no hay DTEND
-      fin = new Date(ev.start.getTime() + 60 * 60 * 1000);
-    }
+    if (ev.allDay) fin.setHours(23, 59, 59, 999);
+    else fin = new Date(ev.start.getTime() + 60 * 60 * 1000);
     if (fin >= ahora) {
       proximos.push(ev);
       if (proximos.length >= 6) break;
     }
   }
-
-  if (proximos.length === 0) {
-    lista.innerHTML = '<li class="empty">Sin eventos próximos</li>';
-    return;
-  }
-
+  if (proximos.length === 0) { lista.innerHTML = '<li class="empty">Sin eventos próximos</li>'; return; }
+  
   var html = '';
   for (var j = 0; j < proximos.length; j++) {
     var e = proximos[j];
     var fechaEv = e.start;
-    var horaStr;
-    var diaStr;
-
+    var horaStr, diaStr;
     if (e.allDay) {
       horaStr = 'Todo el día';
       diaStr = DIAS_CORTOS[fechaEv.getDay()] + ' ' + fechaEv.getDate() + '/' + (fechaEv.getMonth() + 1);
     } else {
       horaStr = pad(fechaEv.getHours()) + ':' + pad(fechaEv.getMinutes());
-      // Si es hoy, mostrar "hoy"; si es mañana, "mañana"; si no, día/mes
       var hoy = new Date();
-      var esHoy = fechaEv.getFullYear() === hoy.getFullYear() &&
-                  fechaEv.getMonth() === hoy.getMonth() &&
-                  fechaEv.getDate() === hoy.getDate();
+      var esHoy = fechaEv.toDateString() === hoy.toDateString();
       var manana = new Date(hoy); manana.setDate(hoy.getDate() + 1);
-      var esManana = fechaEv.getFullYear() === manana.getFullYear() &&
-                     fechaEv.getMonth() === manana.getMonth() &&
-                     fechaEv.getDate() === manana.getDate();
-      if (esHoy) diaStr = 'Hoy';
-      else if (esManana) diaStr = 'Mañana';
+      var esManana = fechaEv.toDateString() === manana.toDateString();
+      if (esHoy) diaStr = 'Hoy'; else if (esManana) diaStr = 'Mañana';
       else diaStr = DIAS_CORTOS[fechaEv.getDay()] + ' ' + fechaEv.getDate() + '/' + (fechaEv.getMonth() + 1);
     }
-
     html += '<li class="event-item' + (e.allDay ? ' all-day' : '') + '">' +
-              '<div class="event-time">' +
-                '<span class="day">' + diaStr + '</span>' +
-                horaStr +
-              '</div>' +
+              '<div class="event-time"><span class="day">' + diaStr + '</span>' + horaStr + '</div>' +
               '<div class="event-title">' + escaparHTML(e.summary) + '</div>' +
             '</li>';
   }
@@ -501,51 +488,41 @@ function escaparHTML(s) {
 }
 
 // ---------- Avisos por voz (TTS) ----------
-var avisosHechos = {}; // clave "timestamp+título" -> true
+var avisosHechos = {};
 var vozDisponible = false;
 var vozElegida = null;
 
 function inicializarVoz() {
-  if (typeof window === 'undefined' || !window.speechSynthesis) {
-    console.warn('Este navegador no soporta speechSynthesis');
-    return;
-  }
+  if (!window.speechSynthesis) return;
   vozDisponible = true;
-
   function elegirVoz() {
     var voces = speechSynthesis.getVoices();
     if (!voces || voces.length === 0) return;
-    // Preferir voces españolas
     for (var i = 0; i < voces.length; i++) {
-      if (voces[i].lang && voces[i].lang.toLowerCase().indexOf('es') === 0) {
-        vozElegida = voces[i];
-        return;
-      }
+      if (voces[i].lang && voces[i].lang.toLowerCase().indexOf('es') === 0) { vozElegida = voces[i]; return; }
     }
     vozElegida = voces[0];
   }
   elegirVoz();
-  // En algunos navegadores las voces se cargan asíncronamente
-  if (typeof speechSynthesis.onvoiceschanged !== 'undefined') {
-    speechSynthesis.onvoiceschanged = elegirVoz;
-  }
+  if (typeof speechSynthesis.onvoiceschanged !== 'undefined') speechSynthesis.onvoiceschanged = elegirVoz;
 }
 
 function hablar(texto) {
   if (!vozDisponible) return;
   try {
-    // Cancelar cualquier cola pendiente para que el aviso nuevo se oiga claro
     speechSynthesis.cancel();
     var utter = new SpeechSynthesisUtterance(texto);
-    utter.lang = 'es-ES';
-    utter.rate = 0.95;
-    utter.pitch = 1;
-    utter.volume = 1;
+    utter.lang = 'es-ES'; utter.rate = 0.95; utter.pitch = 1; utter.volume = 1;
     if (vozElegida) utter.voice = vozElegida;
+    
+    // Animación de la boca al hablar
+    var face = document.getElementById('face');
+    utter.onstart = function() { face.classList.add('speaking'); };
+    utter.onend = function() { face.classList.remove('speaking'); };
+    utter.onerror = function() { face.classList.remove('speaking'); };
+    
     speechSynthesis.speak(utter);
-  } catch (err) {
-    console.warn('Error TTS:', err);
-  }
+  } catch (err) {}
 }
 
 function comprobarAvisos() {
@@ -555,50 +532,57 @@ function comprobarAvisos() {
 
   for (var i = 0; i < eventosCache.length; i++) {
     var ev = eventosCache[i];
-    if (ev.allDay) continue; // No avisamos de eventos de todo el día
-
     var inicio = ev.start.getTime();
-    var diff = inicio - ahora.getTime(); // ms hasta el evento
+    var diff = inicio - ahora.getTime();
 
-    // Ya pasó
-    if (diff < 0) continue;
-
-    // Dentro del umbral
-    if (diff <= umbralMs) {
+    // 1. Eventos normales (Aviso 15 mins antes)
+    if (!ev.allDay && diff > 0 && diff <= umbralMs) {
       var minutos = Math.max(1, Math.round(diff / 60000));
-      var clave = inicio + '|' + ev.summary;
+      var clave = inicio + '|' + ev.summary + '_pre';
       if (!avisosHechos[clave]) {
         avisosHechos[clave] = true;
-        var frase = 'En ' + minutos + ' minutos: ' + ev.summary;
-        hablar(frase);
+        hablar('En ' + minutos + ' minutos: ' + ev.summary);
+      }
+    }
+
+    // 2. Eventos normales (Aviso 0 mins - Es la hora)
+    if (!ev.allDay && diff <= 0 && diff > -60000) { // Si empezó hace menos de 1 min
+      var claveCero = inicio + '|' + ev.summary + '_cero';
+      if (!avisosHechos[claveCero]) {
+        avisosHechos[claveCero] = true;
+        hablar('Atención, es la hora de: ' + ev.summary);
+      }
+    }
+
+    // 3. Eventos de Todo el Día (Aviso el día anterior a las 20:00)
+    if (ev.allDay) {
+      var manana = new Date(ahora); manana.setDate(ahora.getDate() + 1);
+      if (ahora.getHours() === 20 && ahora.getMinutes() === 0 && ev.start.toDateString() === manana.toDateString()) {
+        var claveDia = inicio + '|' + ev.summary + '_dia';
+        if (!avisosHechos[claveDia]) {
+          avisosHechos[claveDia] = true;
+          hablar('Recordatorio para mañana: ' + ev.summary);
+        }
       }
     }
   }
 }
 
-// ---------- Notas familiares (persistencia en localStorage) ----------
+// ---------- Notas familiares ----------
 var STORAGE_KEY = 'panel_familiar_notas';
-
 function cargarNotas() {
-  var area = document.getElementById('notes');
   try {
     var guardado = localStorage.getItem(STORAGE_KEY);
-    if (guardado !== null) area.value = guardado;
-  } catch (e) {
-    console.warn('No se pudo leer localStorage:', e);
-  }
+    if (guardado !== null) document.getElementById('notes').value = guardado;
+  } catch (e) {}
 }
-
 function guardarNotas() {
-  var area = document.getElementById('notes');
   try {
-    localStorage.setItem(STORAGE_KEY, area.value);
+    localStorage.setItem(STORAGE_KEY, document.getElementById('notes').value);
     var hint = document.getElementById('notes-hint');
     hint.textContent = 'Guardado ✓';
     setTimeout(function() { hint.textContent = 'Se guardan automáticamente'; }, 1500);
-  } catch (e) {
-    console.warn('No se pudo guardar:', e);
-  }
+  } catch (e) {}
 }
 
 // ---------- Inicialización ----------
@@ -607,31 +591,24 @@ function iniciar() {
   setInterval(actualizarReloj, 1000);
 
   actualizarClima();
-  setInterval(actualizarClima, 10 * 60 * 1000); // cada 10 min
+  setInterval(actualizarClima, 10 * 60 * 1000);
 
   cargarCalendario();
-  setInterval(cargarCalendario, 5 * 60 * 1000); // cada 5 min
+  setInterval(cargarCalendario, 5 * 60 * 1000);
 
   inicializarVoz();
-  setInterval(comprobarAvisos, 30 * 1000); // cada 30 s
+  setInterval(comprobarAvisos, 30 * 1000);
 
   cargarNotas();
-  var area = document.getElementById('notes');
-  area.addEventListener('input', guardarNotas);
+  document.getElementById('notes').addEventListener('input', guardarNotas);
 
-  // Desbloquear voz en el primer toque (por si el navegador lo exige)
   document.addEventListener('touchstart', function primerToque() {
     if (vozDisponible) {
-      try {
-        var u = new SpeechSynthesisUtterance(' ');
-        u.volume = 0;
-        speechSynthesis.speak(u);
-      } catch (e) {}
+      try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {}
     }
     document.removeEventListener('touchstart', primerToque);
   }, { once: true, passive: true });
 
-  // Recuperar voz si la página vuelve del fondo
   document.addEventListener('visibilitychange', function() {
     if (!document.hidden && vozDisponible) {
       try { speechSynthesis.resume(); } catch (e) {}
@@ -640,11 +617,8 @@ function iniciar() {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', iniciar);
-} else {
-  iniciar();
-}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
+else iniciar();
 </script>
 </body>
 </html>
