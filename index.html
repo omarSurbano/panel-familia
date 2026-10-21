@@ -23,7 +23,7 @@
 
   .panel { display: grid; grid-template-rows: auto 1fr; height: 100vh; padding: 14px; gap: 12px; }
 
-  /* FILA SUPERIOR (Intacta) */
+  /* PANEL SUPERIOR */
   .top-row {
     display: grid; grid-template-columns: auto 1fr auto auto; 
     align-items: center; gap: 20px;
@@ -31,7 +31,7 @@
     border-radius: 14px; padding: 14px 22px; border: 1px solid #253142;
   }
 
-  /* CARITA */
+  /* CARITA (Ahora es redonda y simétrica) */
   .face-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .face-container {
     width: 75px; height: 75px; background: #facc15; border-radius: 50%;
@@ -44,10 +44,10 @@
   .face-container.tarde { background: #facc15; } 
   .face-container.noche { background: #818cf8; }
   
-  /* Animación de baile al hablar */
+  /* Animación de baile */
   .face-container.speaking { animation: dance 0.6s infinite alternate; }
   
-  .eyes { display: flex; gap: 15px; position: absolute; top: 24px; }
+  .eyes { display: flex; gap: 15px; position: absolute; top: 22px; }
   .eye { width: 9px; height: 14px; background: #1a2332; border-radius: 50%; animation: blink 4s infinite; transform-origin: center; }
   .mouth { width: 26px; height: 9px; background: #1a2332; border-radius: 0 0 30px 30px; position: absolute; bottom: 16px; transition: all 0.2s ease; }
   .face-container.speaking .mouth { height: 18px; width: 18px; border-radius: 50%; bottom: 12px; animation: talk 0.3s infinite alternate; }
@@ -56,7 +56,7 @@
   @keyframes talk { 0% { height: 12px; } 100% { height: 22px; } }
   @keyframes dance { 0% { transform: translateY(0) rotate(-10deg); } 100% { transform: translateY(-10px) rotate(10deg); } }
 
-  .btn-hola { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+  .btn-hola { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: bold; cursor: pointer; }
   .btn-hola:active { background: #2563eb; }
 
   /* RELOJ */
@@ -81,10 +81,10 @@
   .battery-level { height: 100%; background: #4ade80; border-radius: 1px; transition: width 0.5s, background 0.5s; }
   .battery-text { font-size: 11px; color: #8aa2bd; font-weight: bold; }
 
-  /* NUEVA DISTRIBUCIÓN INFERIOR (3 Columnas) */
+  /* DISEÑO INFERIOR EN 2 COLUMNAS (Armonioso) */
   .bottom-row { 
     display: grid; 
-    grid-template-columns: 250px 1fr 300px; /* Izq pequeña, Centro grande, Der notas */
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
     gap: 12px; 
     min-height: 0; 
   }
@@ -92,25 +92,22 @@
   .card { background: linear-gradient(135deg, #1a2332 0%, #141b26 100%); border-radius: 14px; padding: 12px 16px; border: 1px solid #253142; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
   .card-title { font-size: 14px; font-weight: 600; color: #6b87a8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #253142; flex-shrink: 0; }
 
-  /* Eventos (Columna Izquierda) */
+  /* Columna Izquierda: Eventos (Mitad superior) + Chistes (Mitad inferior) */
+  .left-column { display: grid; grid-template-rows: 1fr 1fr; gap: 12px; min-height: 0; }
+  
   .events-list { list-style: none; overflow-y: auto; flex: 1; min-height: 0; padding-right: 4px; }
-  .events-list::-webkit-scrollbar { width: 4px; }
-  .events-list::-webkit-scrollbar-thumb { background: #253142; border-radius: 2px; }
-  .event-item { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 1px dashed #1f2a3a; }
-  .event-item:last-child { border-bottom: none; }
-  .event-time { font-size: 12px; color: #6b87a8; font-weight: bold; }
-  .event-time .day { color: #4a6079; margin-right: 4px; }
-  .event-title { font-size: 15px; color: #e8eef5; line-height: 1.2; word-break: break-word; }
-  .event-item.all-day .event-time { color: #e0a94a; }
+  .event-item { display: grid; grid-template-columns: 60px 1fr; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed #1f2a3a; }
+  .event-time { font-size: 12px; color: #6b87a8; }
+  .event-time .day { display: block; font-size: 10px; color: #4a6079; }
+  .event-title { font-size: 15px; color: #e8eef5; }
+  .empty { color: #55687d; font-size: 14px; padding: 10px 0; font-style: italic; }
 
-  /* Chistes y Datos (Columna Centro) */
-  .center-card { justify-content: center; text-align: center; padding: 20px; }
-  .chiste-text { font-size: 24px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-  .dato-text { font-size: 18px; color: #a78bfa; font-style: italic; line-height: 1.3; }
+  .fun-card { justify-content: center; text-align: center; }
+  .chiste-text { font-size: 18px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 10px; }
+  .dato-text { font-size: 15px; color: #a78bfa; font-style: italic; line-height: 1.3; }
 
-  /* Notas (Columna Derecha) */
-  .notes-area { flex: 1; width: 100%; background: #0b1016; color: #e8eef5; border: 1px solid #253142; border-radius: 8px; padding: 10px; font-size: 15px; line-height: 1.4; font-family: inherit; resize: none; outline: none; min-height: 0; transition: border-color 0.3s; }
-  .notes-area:focus { border-color: #3b82f6; }
+  /* Columna Derecha: Notas familiares (Ocupa toda la altura) */
+  .notes-area { flex: 1; width: 100%; background: #0b1016; color: #e8eef5; border: 1px solid #253142; border-radius: 8px; padding: 10px; font-size: 16px; line-height: 1.4; font-family: inherit; resize: none; outline: none; min-height: 0; }
   .notes-hint { font-size: 11px; color: #4a6079; margin-top: 4px; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .notes-hint.saved { color: #4ade80; }
 
@@ -121,11 +118,16 @@
     .clock-block .clock .seconds { font-size: 22px; }
     .weather-info .temp { font-size: 35px; }
     .face-container { width: 60px; height: 60px; }
-    .bottom-row { grid-template-columns: 1fr; grid-template-rows: 120px 1fr; }
+    .eyes { top: 18px; gap: 12px; }
+    .eye { width: 8px; height: 12px; }
+    .mouth { bottom: 12px; width: 20px; height: 8px; }
+    
+    .bottom-row { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    .left-column { grid-template-rows: 1fr; }
     .events-list { display: flex; flex-direction: row; overflow-x: auto; gap: 10px; }
     .event-item { border-bottom: none; border-right: 1px dashed #1f2a3a; padding: 0 10px; min-width: 120px; }
-    .chiste-text { font-size: 18px; }
-    .dato-text { font-size: 15px; }
+    .chiste-text { font-size: 16px; }
+    .dato-text { font-size: 14px; }
   }
 </style>
 </head>
@@ -134,7 +136,7 @@
 <div class="wake-overlay" onclick="toggleSleep()"></div>
 
 <div class="panel">
-  <!-- PANEL SUPERIOR INTACTO -->
+  <!-- PANEL SUPERIOR -->
   <div class="top-row">
     <div class="face-wrapper">
       <div class="face-container" id="face" onclick="decirHola()">
@@ -165,18 +167,19 @@
     </div>
   </div>
 
-  <!-- NUEVO PANEL INFERIOR -->
+  <!-- DISEÑO INFERIOR EN 2 COLUMNAS -->
   <div class="bottom-row">
-    <!-- Columna Izquierda: Eventos (más pequeña) -->
-    <div class="card">
-      <div class="card-title">Próximos eventos</div>
-      <ul class="events-list" id="events-list"><li class="empty">Cargando...</li></ul>
-    </div>
-
-    <!-- Columna Central: Chistes y Datos (Grande) -->
-    <div class="card center-card">
-      <div class="chiste-text" id="chiste-box"></div>
-      <div class="dato-text" id="dato-box"></div>
+    
+    <!-- Columna Izquierda: Eventos (arriba) y Chistes (abajo) -->
+    <div class="left-column">
+      <div class="card">
+        <div class="card-title">Próximos eventos</div>
+        <ul class="events-list" id="events-list"><li class="empty">Cargando...</li></ul>
+      </div>
+      <div class="card fun-card">
+        <div class="chiste-text" id="chiste-box"></div>
+        <div class="dato-text" id="dato-box"></div>
+      </div>
     </div>
 
     <!-- Columna Derecha: Notas -->
@@ -185,6 +188,7 @@
       <textarea class="notes-area" id="notes" placeholder="Escribe aquí..."></textarea>
       <div class="notes-hint" id="notes-hint">Se guardan automáticamente</div>
     </div>
+
   </div>
 </div>
 
@@ -309,11 +313,8 @@ function hablar(texto) {
     u.onstart = function() { document.getElementById('face').classList.add('speaking'); };
     u.onend = function() { document.getElementById('face').classList.remove('speaking'); };
     u.onerror = function() { document.getElementById('face').classList.remove('speaking'); };
-    
-    // TRUCO FIRE OS: A veces necesita un empujoncito extra
     speechSynthesis.speak(u);
     setTimeout(function(){ speechSynthesis.resume(); }, 500);
-    
   } catch(e) {}
 }
 
@@ -381,4 +382,5 @@ function parsearICS(texto) {
     else if (l === 'END:VEVENT') { if (actual.start && actual.summary) eventos.push(actual); dentro = false; }
     else if (dentro) {
       if (l.indexOf('STATUS:CANCELLED') === 0) actual.cancelado = true;
-      if (l.indexOf('DTSTART') === 0) { var p = parseICSDate(l.split(
+      if (l.indexOf('DTSTART') === 0) { var p = parseICSDate(l.split(':')[1]); if(p) { actual.start = p.date; actual.allDay = p.allDay; } }
+      if (l.indexOf('SUMMARY:') 
