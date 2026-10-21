@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Panel Familiar</title>
+<style>
+  /* ============ RESET Y BASE ============ */
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #0f1419;
+    color: #e8eef5;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ LAYOUT PRINCIPAL ============ */
+  .panel {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  /* Fila superior: reloj + clima */
+  .top-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, #1a2332 0%, #141b26 100%);
+    border-radius: 14px;
+    padding: 14px 22px;
+    border: 1px solid #253142;
+  }
+
+  .clock-block .clock {
+    font-size: 92px;
+    font-weight: 300;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: #ffffff;
+    font-variant-numeric: tabular-nums;
+  }
+  .clock-block .date {
+    font-size: 22px;
+    color: #8aa2bd;
+    margin-top: 6px;
+    text-transform: capitalize;
+  }
+
+  .weather-block {
+    text-align: right;
+    min-width: 180px;
+  }
+  .weather-block .temp {
+    font-size: 58px;
+    font-weight: 300;
+    color: #ffffff;
+    line-height: 1;
+  }
+  .weather-block .temp .unit { font-size: 28px; color: #8aa2bd; vertical-align: top; margin-left: 2px; }
+  .weather-block .desc {
+    font-size: 18px;
+    color: #8aa2bd;
+    text-transform: capitalize;
+    margin-top: 4px;
+  }
+  .weather-block .city {
+    font-size: 14px;
+    color: #55687d;
+    margin-top: 2px;
+  }
+
+  /* Fila inferior: eventos + notas */
+  .bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    min-height: 0;
+  }
+
+  .card {
+    background: linear-gradient(135deg, #1a2332 0%, #141b26 100%);
+    border-radius: 14px;
+    padding: 14px 18px;
+    border: 1px solid #253142;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6b87a8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #253142;
+    flex-shrink: 0;
+  }
+
+  /* Eventos */
+  .events-list {
+    list-style: none;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    padding-right: 4px;
+  }
+  .events-list::-webkit-scrollbar { width: 4px; }
+  .events-list::-webkit-scrollbar-thumb { background: #253142; border-radius: 2px; }
+
+  .event-item {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 12px;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dashed #1f2a3a;
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-time {
+    font-size: 14px;
+    color: #6b87a8;
+    font-variant-numeric: tabular-nums;
+  }
+  .event-time .day {
+    display: block;
+    font-size: 12px;
+    color: #4a6079;
+    text-transform: capitalize;
+  }
+  .event-title {
+    font-size: 18px;
+    color: #e8eef5;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+  .event-item.all-day .event-time { color: #e0a94a; }
+  .empty { color: #55687d; font-size: 16px; padding: 12px 0; font-style: italic; }
+
+  /* Notas */
+  .notes-area {
+    flex: 1;
+    width: 100%;
+    background: #0b1016;
+    color: #e8eef5;
+    border: 1px solid #253142;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 17px;
+    line-height: 1.5;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    min-height: 0;
+  }
+  .notes-area:focus { border-color: #3b82f6; }
+  .notes-hint {
+    font-size: 12px;
+    color: #4a6079;
+    margin-top: 6px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 800px) {
+    .clock-block .clock { font-size: 64px; }
+    .clock-block .date { font-size: 16px; }
+    .weather-block .temp { font-size: 42px; }
+    .weather-block { min-width: 130px; }
+    .event-title { font-size: 15px; }
+    .notes-area { font-size: 15px; }
+  }
+  @media (max-height: 480px) {
+    .panel { padding: 8px; gap: 8px; }
+    .top-row { padding: 10px 16px; }
+    .clock-block .clock { font-size: 58px; }
+    .weather-block .temp { font-size: 38px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+
+  <!-- Fila superior: reloj y clima -->
+  <div class="top-row">
+    <div class="clock-block">
+      <div class="clock" id="clock">--:--</div>
+      <div class="date" id="date">cargando...</div>
+    </div>
+    <div class="weather-block">
+      <div class="temp"><span id="temp">--</span><span class="unit">°C</span></div>
+      <div class="desc" id="weather-desc">Cargando clima...</div>
+      <div class="city" id="city-name"></div>
+    </div>
+  </div>
+
+  <!-- Fila inferior: eventos y notas -->
+  <div class="bottom-row">
+
+    <div class="card">
+      <div class="card-title">Próximos eventos</div>
+      <ul class="events-list" id="events-list">
+        <li class="empty">Cargando calendario...</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Notas familiares</div>
+      <textarea
+        class="notes-area"
+        id="notes"
+        placeholder="Escribe aquí recados para la familia..."
+        spellcheck="false"></textarea>
+      <div class="notes-hint" id="notes-hint">Se guardan automáticamente</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — Edita estos valores con tus datos
+   ============================================================ */
+
+// URL pública ICS de tu calendario familiar de Zoho Calendar
+var ICS_URL = 'https://calendar.zoho.eu/ical/0801124a10c3225a1c0cbe70e60164630000c9a0aeb4fc836bc4ef90ffc3eeea6b2dbce1b397714cf7c85c39a9d04d8b50bcaa3fc4c97bfcce46eff8cc65a3aed0817a382c81f9b440059775d2cb';
+
+// Coordenadas exactas de Luserna San Giovanni
+var LAT = 44.8150;
+var LON = 7.2450;
+
+// Nombre de la ciudad (solo informativo, aparece en la interfaz)
+var CIUDAD = 'Luserna San Giovanni';
+
+// Minutos antes del evento para avisar por voz
+var AVISO_MIN = 15;
+
+/* ============================================================
+   FIN DE CONFIGURACIÓN — No hace falta tocar nada más abajo
+   ============================================================ */
+
+// ---------- Utilidades de fecha en español ----------
+var DIAS_SEMANA = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+             'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+var DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+function fechaLarga(d) {
+  return DIAS_SEMANA[d.getDay()] + ', ' + d.getDate() + ' de ' + MESES[d.getMonth()];
+}
+
+// ---------- Reloj y fecha ----------
+function actualizarReloj() {
+  var ahora = new Date();
+  document.getElementById('clock').textContent = pad(ahora.getHours()) + ':' + pad(ahora.getMinutes());
+  document.getElementById('date').textContent = fechaLarga(ahora);
+}
+
+// ---------- Clima (Open-Meteo) ----------
+// Mapa de weather_code WMO a descripción en español
+var WMO_CODES = {
+  0: 'Cielo despejado',
+  1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado',
+  45: 'Niebla', 48: 'Niebla con escarcha',
+  51: 'Llovizna ligera', 53: 'Llovizna', 55: 'Llovizna intensa',
+  56: 'Llovizna helada', 57: 'Llovizna helada intensa',
+  61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia intensa',
+  66: 'Lluvia helada', 67: 'Lluvia helada intensa',
+  71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve intensa',
+  77: 'Granizo',
+  80: 'Chubascos ligeros', 81: 'Chubascos', 82: 'Chubascos fuertes',
+  85: 'Chubascos de nieve', 86: 'Chubascos de nieve intensos',
+  95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte con granizo'
+};
+
+function actualizarClima() {
+  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + LAT +
+            '&longitude=' + LON + '&current_weather=true&timezone=auto';
+  fetch(url, { cache: 'no-store' })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data || !data.current_weather) throw new Error('Datos inválidos');
+      var w = data.current_weather;
+      var temp = Math.round(w.temperature);
+      var desc = WMO_CODES[w.weathercode] || 'Sin datos';
+      document.getElementById('temp').textContent = temp;
+      document.getElementById('weather-desc').textContent = desc;
+      document.getElementById('city-name').textContent = CIUDAD;
+    })
+    .catch(function(err) {
+      console.warn('Error clima:', err);
+      document.getElementById('temp').textContent = '--';
+      document.getElementById('weather-desc').textContent = 'Sin datos';
+      document.getElementById('city-name').textContent = CIUDAD;
+    });
+}
+
+// ---------- Parseo de ICS ----------
+// Convierte una cadena DTSTART de ICS a un objeto Date
+// Soporta: 20261022T100000Z (UTC), 20261022T100000 (local), 20261022 (todo el día)
+function parseICSDate(str, params) {
+  if (!str) return null;
+  str = str.trim();
+  var allDay = false;
+
+  // Formato fecha completa (todo el día): YYYYMMDD
+  if (str.length === 8 && str.indexOf('T') === -1) {
+    allDay = true;
+    var y = parseInt(str.substr(0, 4), 10);
+    var m = parseInt(str.substr(4, 2), 10) - 1;
+    var d = parseInt(str.substr(6, 2), 10);
+    return { date: new Date(y, m, d), allDay: true };
+  }
+
+  // Formato con hora: YYYYMMDDTHHMMSS[Z]
+  if (str.length >= 15 && str.charAt(8) === 'T') {
+    var y2 = parseInt(str.substr(0, 4), 10);
+    var m2 = parseInt(str.substr(4, 2), 10) - 1;
+    var d2 = parseInt(str.substr(6, 2), 10);
+    var hh = parseInt(str.substr(9, 2), 10);
+    var mm = parseInt(str.substr(11, 2), 10);
+    var ss = parseInt(str.substr(13, 2), 10);
+
+    if (str.charAt(str.length - 1) === 'Z') {
+      // UTC
+      return { date: new Date(Date.UTC(y2, m2, d2, hh, mm, ss)), allDay: false };
+    } else {
+      // Hora local (sin Z)
+      return { date: new Date(y2, m2, d2, hh, mm, ss), allDay: false };
+    }
+  }
+  return null;
+}
+
+// Despliega las líneas "folded" del ICS (líneas que empiezan con espacio o tab son continuación)
+function unfoldICS(text) {
+  return text.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
+}
+
+function parsearICS(texto) {
+  var eventos = [];
+  var lines = unfoldICS(texto).split('\n');
+  var dentro = false;
+  var actual = {};
+
+  for (var i = 0; i < lines.length; i++) {
+    var linea = lines[i];
+    if (linea === 'BEGIN:VEVENT') {
+      dentro = true;
+      actual = {};
+      continue;
+    }
+    if (linea === 'END:VEVENT') {
+      if (actual.start && actual.summary) {
+        eventos.push(actual);
+      }
+      dentro = false;
+      continue;
+    }
+    if (!dentro) continue;
+
+    // Ignorar eventos cancelados
+    if (linea.indexOf('STATUS:CANCELLED') === 0) {
+      actual.cancelado = true;
+      continue;
+    }
+
+    // DTSTART con posibles parámetros: DTSTART;VALUE=DATE:20261022 o DTSTART:20261022T100000Z
+    if (linea.indexOf('DTSTART') === 0) {
+      var partes = linea.split(':');
+      var cabecera = partes[0];
+      var valor = partes.slice(1).join(':');
+      var esTodoDia = cabecera.indexOf('VALUE=DATE') !== -1;
+      var parsed = parseICSDate(valor, cabecera);
+      if (parsed) {
+        actual.start = parsed.date;
+        actual.allDay = parsed.allDay || esTodoDia;
+      }
+      continue;
+    }
+
+    if (linea.indexOf('SUMMARY:') === 0) {
+      actual.summary = linea.substr(8).trim()
+        .replace(/\\,/g, ',').replace(/\\;/g, ';').replace(/\\n/gi, ' ').replace(/\\\\/g, '\\');
+      continue;
+    }
+  }
+  return eventos;
+}
+
+var eventosCache = [];
+
+function cargarCalendario() {
+  if (!ICS_URL || ICS_URL.indexOf('XXXX') === 0) {
+    document.getElementById('events-list').innerHTML =
+      '<li class="empty">Configura ICS_URL en el script</li>';
+    return;
+  }
+  fetch(ICS_URL, { cache: 'no-store' })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
+    .then(function(texto) {
+      var eventos = parsearICS(texto);
+      // Filtrar cancelados
+      eventos = eventos.filter(function(e) { return !e.cancelado; });
+      // Ordenar por fecha
+      eventos.sort(function(a, b) { return a.start - b.start; });
+      eventosCache = eventos;
+      renderizarEventos();
+      comprobarAvisos();
+    })
+    .catch(function(err) {
+      console.warn('Error ICS:', err);
+      document.getElementById('events-list').innerHTML =
+        '<li class="empty">No se pudo cargar el calendario</li>';
+    });
+}
+
+function renderizarEventos() {
+  var lista = document.getElementById('events-list');
+  var ahora = new Date();
+  // Mostrar próximos 6 eventos desde "ahora" (incluyendo los de hoy que no hayan pasado si son todo el día)
+  var proximos = [];
+  for (var i = 0; i < eventosCache.length; i++) {
+    var ev = eventosCache[i];
+    var fin = new Date(ev.start.getTime());
+    if (ev.allDay) {
+      fin.setHours(23, 59, 59, 999);
+    } else {
+      // Asumimos duración de 1h si no hay DTEND
+      fin = new Date(ev.start.getTime() + 60 * 60 * 1000);
+    }
+    if (fin >= ahora) {
+      proximos.push(ev);
+      if (proximos.length >= 6) break;
+    }
+  }
+
+  if (proximos.length === 0) {
+    lista.innerHTML = '<li class="empty">Sin eventos próximos</li>';
+    return;
+  }
+
+  var html = '';
+  for (var j = 0; j < proximos.length; j++) {
+    var e = proximos[j];
+    var fechaEv = e.start;
+    var horaStr;
+    var diaStr;
+
+    if (e.allDay) {
+      horaStr = 'Todo el día';
+      diaStr = DIAS_CORTOS[fechaEv.getDay()] + ' ' + fechaEv.getDate() + '/' + (fechaEv.getMonth() + 1);
+    } else {
+      horaStr = pad(fechaEv.getHours()) + ':' + pad(fechaEv.getMinutes());
+      // Si es hoy, mostrar "hoy"; si es mañana, "mañana"; si no, día/mes
+      var hoy = new Date();
+      var esHoy = fechaEv.getFullYear() === hoy.getFullYear() &&
+                  fechaEv.getMonth() === hoy.getMonth() &&
+                  fechaEv.getDate() === hoy.getDate();
+      var manana = new Date(hoy); manana.setDate(hoy.getDate() + 1);
+      var esManana = fechaEv.getFullYear() === manana.getFullYear() &&
+                     fechaEv.getMonth() === manana.getMonth() &&
+                     fechaEv.getDate() === manana.getDate();
+      if (esHoy) diaStr = 'Hoy';
+      else if (esManana) diaStr = 'Mañana';
+      else diaStr = DIAS_CORTOS[fechaEv.getDay()] + ' ' + fechaEv.getDate() + '/' + (fechaEv.getMonth() + 1);
+    }
+
+    html += '<li class="event-item' + (e.allDay ? ' all-day' : '') + '">' +
+              '<div class="event-time">' +
+                '<span class="day">' + diaStr + '</span>' +
+                horaStr +
+              '</div>' +
+              '<div class="event-title">' + escaparHTML(e.summary) + '</div>' +
+            '</li>';
+  }
+  lista.innerHTML = html;
+}
+
+function escaparHTML(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ---------- Avisos por voz (TTS) ----------
+var avisosHechos = {}; // clave "timestamp+título" -> true
+var vozDisponible = false;
+var vozElegida = null;
+
+function inicializarVoz() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    console.warn('Este navegador no soporta speechSynthesis');
+    return;
+  }
+  vozDisponible = true;
+
+  function elegirVoz() {
+    var voces = speechSynthesis.getVoices();
+    if (!voces || voces.length === 0) return;
+    // Preferir voces españolas
+    for (var i = 0; i < voces.length; i++) {
+      if (voces[i].lang && voces[i].lang.toLowerCase().indexOf('es') === 0) {
+        vozElegida = voces[i];
+        return;
+      }
+    }
+    vozElegida = voces[0];
+  }
+  elegirVoz();
+  // En algunos navegadores las voces se cargan asíncronamente
+  if (typeof speechSynthesis.onvoiceschanged !== 'undefined') {
+    speechSynthesis.onvoiceschanged = elegirVoz;
+  }
+}
+
+function hablar(texto) {
+  if (!vozDisponible) return;
+  try {
+    // Cancelar cualquier cola pendiente para que el aviso nuevo se oiga claro
+    speechSynthesis.cancel();
+    var utter = new SpeechSynthesisUtterance(texto);
+    utter.lang = 'es-ES';
+    utter.rate = 0.95;
+    utter.pitch = 1;
+    utter.volume = 1;
+    if (vozElegida) utter.voice = vozElegida;
+    speechSynthesis.speak(utter);
+  } catch (err) {
+    console.warn('Error TTS:', err);
+  }
+}
+
+function comprobarAvisos() {
+  if (!vozDisponible) return;
+  var ahora = new Date();
+  var umbralMs = AVISO_MIN * 60 * 1000;
+
+  for (var i = 0; i < eventosCache.length; i++) {
+    var ev = eventosCache[i];
+    if (ev.allDay) continue; // No avisamos de eventos de todo el día
+
+    var inicio = ev.start.getTime();
+    var diff = inicio - ahora.getTime(); // ms hasta el evento
+
+    // Ya pasó
+    if (diff < 0) continue;
+
+    // Dentro del umbral
+    if (diff <= umbralMs) {
+      var minutos = Math.max(1, Math.round(diff / 60000));
+      var clave = inicio + '|' + ev.summary;
+      if (!avisosHechos[clave]) {
+        avisosHechos[clave] = true;
+        var frase = 'En ' + minutos + ' minutos: ' + ev.summary;
+        hablar(frase);
+      }
+    }
+  }
+}
+
+// ---------- Notas familiares (persistencia en localStorage) ----------
+var STORAGE_KEY = 'panel_familiar_notas';
+
+function cargarNotas() {
+  var area = document.getElementById('notes');
+  try {
+    var guardado = localStorage.getItem(STORAGE_KEY);
+    if (guardado !== null) area.value = guardado;
+  } catch (e) {
+    console.warn('No se pudo leer localStorage:', e);
+  }
+}
+
+function guardarNotas() {
+  var area = document.getElementById('notes');
+  try {
+    localStorage.setItem(STORAGE_KEY, area.value);
+    var hint = document.getElementById('notes-hint');
+    hint.textContent = 'Guardado ✓';
+    setTimeout(function() { hint.textContent = 'Se guardan automáticamente'; }, 1500);
+  } catch (e) {
+    console.warn('No se pudo guardar:', e);
+  }
+}
+
+// ---------- Inicialización ----------
+function iniciar() {
+  actualizarReloj();
+  setInterval(actualizarReloj, 1000);
+
+  actualizarClima();
+  setInterval(actualizarClima, 10 * 60 * 1000); // cada 10 min
+
+  cargarCalendario();
+  setInterval(cargarCalendario, 5 * 60 * 1000); // cada 5 min
+
+  inicializarVoz();
+  setInterval(comprobarAvisos, 30 * 1000); // cada 30 s
+
+  cargarNotas();
+  var area = document.getElementById('notes');
+  area.addEventListener('input', guardarNotas);
+
+  // Desbloquear voz en el primer toque (por si el navegador lo exige)
+  document.addEventListener('touchstart', function primerToque() {
+    if (vozDisponible) {
+      try {
+        var u = new SpeechSynthesisUtterance(' ');
+        u.volume = 0;
+        speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+    document.removeEventListener('touchstart', primerToque);
+  }, { once: true, passive: true });
+
+  // Recuperar voz si la página vuelve del fondo
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && vozDisponible) {
+      try { speechSynthesis.resume(); } catch (e) {}
+      comprobarAvisos();
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', iniciar);
+} else {
+  iniciar();
+}
+</script>
+</body>
+  </html>
