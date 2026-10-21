@@ -15,25 +15,17 @@
     transition: background 0.5s ease;
   }
 
-  /* MODO CINE (Fondo oscuro) */
-  body.cine-mode { background: #000000; }
-  body.cine-mode .card, body.cine-mode .top-row { opacity: 0.1; pointer-events: none; }
-  body.cine-mode .face-container { opacity: 1; pointer-events: auto; margin: 0 auto; }
+  /* MODO PANTALLA APAGADA (Modo Descanso) */
+  body.sleep-mode { background: #000000 !important; }
+  body.sleep-mode .panel { opacity: 0; pointer-events: none; }
+  body.sleep-mode .wake-overlay { display: block; }
   
-  .cinema-timer {
+  .wake-overlay {
     display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    justify-content: center; align-items: center; flex-direction: column; z-index: 100;
-    color: #fff; text-align: center;
-  }
-  body.cine-mode .cinema-timer { display: flex; }
-  .cinema-timer h1 { font-size: 120px; font-weight: 300; font-variant-numeric: tabular-nums; margin-bottom: 20px;}
-  .cinema-timer p { font-size: 30px; color: #8aa2bd; }
-  .cinema-timer button {
-    margin-top: 40px; padding: 15px 30px; font-size: 20px; border-radius: 10px;
-    background: #ef4444; color: white; border: none; cursor: pointer;
+    z-index: 999; cursor: pointer;
   }
 
-  .panel { display: grid; grid-template-rows: auto 1fr; height: 100vh; padding: 14px; gap: 12px; }
+  .panel { display: grid; grid-template-rows: auto 1fr; height: 100vh; padding: 14px; gap: 12px; transition: opacity 0.5s; }
 
   /* Fila superior */
   .top-row {
@@ -41,13 +33,12 @@
     align-items: center; gap: 20px;
     background: linear-gradient(135deg, #1a2332 0%, #141b26 100%);
     border-radius: 14px; padding: 14px 22px; border: 1px solid #253142;
-    transition: opacity 0.5s;
   }
 
   /* CARITA */
   .face-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .face-container {
-    width: 80px; height: 80px; background: #facc15; border-radius: 50%;
+    width: 75px; height: 75px; background: #facc15; border-radius: 50%;
     position: relative; display: flex; justify-content: center; align-items: center;
     box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1); transition: background 0.5s, transform 0.3s;
     cursor: pointer;
@@ -56,16 +47,14 @@
   .face-container.manana { background: #fbbf24; } 
   .face-container.tarde { background: #facc15; } 
   .face-container.noche { background: #818cf8; }
-  body.cine-mode .face-container { background: #facc15; animation: dance 1s infinite alternate; }
   
-  .eyes { display: flex; gap: 18px; position: absolute; top: 25px; }
-  .eye { width: 10px; height: 15px; background: #1a2332; border-radius: 50%; animation: blink 4s infinite; transform-origin: center; }
-  .mouth { width: 28px; height: 10px; background: #1a2332; border-radius: 0 0 30px 30px; position: absolute; bottom: 18px; transition: all 0.2s ease; }
-  .face-container.speaking .mouth { height: 20px; width: 20px; border-radius: 50%; bottom: 14px; animation: talk 0.3s infinite alternate; }
+  .eyes { display: flex; gap: 15px; position: absolute; top: 24px; }
+  .eye { width: 9px; height: 14px; background: #1a2332; border-radius: 50%; animation: blink 4s infinite; transform-origin: center; }
+  .mouth { width: 26px; height: 9px; background: #1a2332; border-radius: 0 0 30px 30px; position: absolute; bottom: 16px; transition: all 0.2s ease; }
+  .face-container.speaking .mouth { height: 18px; width: 18px; border-radius: 50%; bottom: 12px; animation: talk 0.3s infinite alternate; }
   
   @keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.1); } }
-  @keyframes talk { 0% { height: 15px; } 100% { height: 25px; } }
-  @keyframes dance { 0% { transform: translateY(0) rotate(-10deg); } 100% { transform: translateY(-15px) rotate(10deg); } }
+  @keyframes talk { 0% { height: 12px; } 100% { height: 22px; } }
 
   .btn-hola {
     background: #3b82f6; color: white; border: none; border-radius: 20px;
@@ -80,15 +69,16 @@
   .clock-block .clock .seconds { font-size: 30px; color: #6b87a8; }
   .clock-block .date { font-size: 18px; color: #8aa2bd; margin-top: 4px; text-transform: capitalize; }
 
-  /* CLIMA Y BOTÓN CINE */
-  .weather-block { text-align: right; min-width: 140px; display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
-  .weather-info .temp { font-size: 50px; font-weight: 300; color: #ffffff; line-height: 1; }
-  .weather-info .temp .unit { font-size: 24px; color: #8aa2bd; vertical-align: top; }
-  .weather-info .desc { font-size: 15px; color: #8aa2bd; text-transform: capitalize; margin-top: 2px; }
-  .weather-info .city { font-size: 12px; color: #55687d; }
+  /* CLIMA Y CONTADOR */
+  .weather-block { text-align: right; min-width: 130px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+  .weather-info .temp { font-size: 45px; font-weight: 300; color: #ffffff; line-height: 1; }
+  .weather-info .temp .unit { font-size: 22px; color: #8aa2bd; vertical-align: top; }
+  .weather-info .desc { font-size: 14px; color: #8aa2bd; text-transform: capitalize; margin-top: 2px; }
+  .weather-info .city { font-size: 11px; color: #55687d; }
+  .weather-info .countdown { font-size: 12px; color: #fbbf24; margin-top: 4px; font-weight: bold; }
   
-  .btn-cine { font-size: 28px; background: none; border: none; cursor: pointer; filter: grayscale(1); opacity: 0.7; transition: 0.3s; }
-  .btn-cine:hover, .btn-cine:active { filter: grayscale(0); opacity: 1; transform: scale(1.1); }
+  .btn-sleep { font-size: 24px; background: none; border: none; cursor: pointer; opacity: 0.6; transition: 0.3s; }
+  .btn-sleep:active { transform: scale(0.9); opacity: 1; }
 
   /* BATERÍA */
   .battery-block { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 40px; }
@@ -99,7 +89,7 @@
 
   /* Fila inferior */
   .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 0; }
-  .card { background: linear-gradient(135deg, #1a2332 0%, #141b26 100%); border-radius: 14px; padding: 12px 16px; border: 1px solid #253142; display: flex; flex-direction: column; min-height: 0; overflow: hidden; transition: opacity 0.5s; }
+  .card { background: linear-gradient(135deg, #1a2332 0%, #141b26 100%); border-radius: 14px; padding: 12px 16px; border: 1px solid #253142; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
   .card-title { font-size: 15px; font-weight: 600; color: #6b87a8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #253142; flex-shrink: 0; }
 
   /* Eventos */
@@ -114,53 +104,51 @@
   .event-item.all-day .event-time { color: #e0a94a; }
   .empty { color: #55687d; font-size: 15px; padding: 10px 0; font-style: italic; }
 
-  /* Notas y Chistes */
+  /* Notas y Extras */
   .notes-area { flex: 1; width: 100%; background: #0b1016; color: #e8eef5; border: 1px solid #253142; border-radius: 8px; padding: 10px; font-size: 16px; line-height: 1.4; font-family: inherit; resize: none; outline: none; min-height: 0; transition: border-color 0.3s; }
   .notes-area:focus { border-color: #3b82f6; }
   .notes-hint { font-size: 11px; color: #4a6079; margin-top: 4px; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .notes-hint.saved { color: #4ade80; }
   
-  .chiste-box { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #253142; font-size: 14px; color: #fbbf24; font-style: italic; text-align: center; }
+  .info-box { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #253142; font-size: 13px; text-align: center; }
+  .chiste-text { color: #fbbf24; font-style: italic; margin-bottom: 4px; }
+  .dato-text { color: #a78bfa; font-size: 12px; }
 
   @media (max-width: 800px) {
     .top-row { grid-template-columns: auto 1fr auto; padding: 10px; gap: 10px; }
     .battery-block { display: none; }
-    .clock-block .clock { font-size: 55px; }
-    .clock-block .clock .seconds { font-size: 25px; }
-    .clock-block .date { font-size: 15px; }
-    .weather-info .temp { font-size: 38px; }
+    .clock-block .clock { font-size: 50px; }
+    .clock-block .clock .seconds { font-size: 22px; }
+    .clock-block .date { font-size: 14px; }
+    .weather-info .temp { font-size: 35px; }
     .weather-info .desc, .weather-info .city { font-size: 12px; }
     .face-container { width: 60px; height: 60px; }
     .eyes { top: 18px; gap: 12px; }
     .eye { width: 8px; height: 12px; }
     .mouth { bottom: 12px; width: 20px; height: 8px; }
+    .info-box { font-size: 11px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Modo Cine (Oculto por defecto) -->
-<div class="cinema-timer" id="cinema-timer">
-  <h1 id="timer-display">02:00:00</h1>
-  <p>Modo Cine activado 🍿</p>
-  <button onclick="toggleCine()">Salir del Modo Cine</button>
-</div>
+<div class="wake-overlay" onclick="toggleSleep()"></div>
 
 <div class="panel">
   <div class="top-row">
     
-    <!-- Carita y Botón Hola -->
+    <!-- Carita y Botón Hola Arwen -->
     <div class="face-wrapper">
       <div class="face-container" id="face" onclick="decirHola()">
         <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
         <div class="mouth"></div>
       </div>
-      <button class="btn-hola" onclick="decirHola()">¡Hola!</button>
+      <button class="btn-hola" onclick="decirHola()">Hola Arwen</button>
     </div>
 
     <div class="clock-block">
       <div class="clock" id="clock">--:--<span class="seconds">:--</span></div>
-      <div class="date" id="date">cargando...</div>
+      <div class="date" id="date">Cargando...</div>
     </div>
 
     <div class="weather-block">
@@ -168,8 +156,9 @@
         <div class="temp"><span id="temp">--</span><span class="unit">°C</span></div>
         <div class="desc" id="weather-desc">Cargando...</div>
         <div class="city" id="city-name"></div>
+        <div class="countdown" id="countdown"></div>
       </div>
-      <button class="btn-cine" onclick="toggleCine()" title="Modo Cine">🎬</button>
+      <button class="btn-sleep" onclick="toggleSleep()" title="Apagar pantalla">🌙</button>
     </div>
 
     <div class="battery-block">
@@ -188,7 +177,11 @@
       <div class="card-title">Notas familiares</div>
       <textarea class="notes-area" id="notes" placeholder="Escribe aquí..."></textarea>
       <div class="notes-hint" id="notes-hint">Se guardan automáticamente</div>
-      <div class="chiste-box" id="chiste-box"></div>
+      
+      <div class="info-box">
+        <div class="chiste-text" id="chiste-box"></div>
+        <div class="dato-text" id="dato-box"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -201,6 +194,10 @@ var ICS_URL = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('
 var LAT = 44.8150;
 var LON = 7.2450;
 var CIUDAD = 'Luserna San Giovanni';
+
+// Evento cuenta atrás (Año, Mes(0-11), Día, Texto)
+var EVENTO_FUTURO = { anio: 2024, mes: 11, dia: 25, texto: 'Navidad' };
+
 var AVISO_MIN = 15;
 
 /* ============================================================ */
@@ -209,7 +206,7 @@ var DIAS_SEMANA = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
 var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var DIAS_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-// ---------- CHISTES ----------
+// ---------- DATOS Y CHISTES ----------
 var CHISTES = [
   "¿Sabes cuál es el café más peligroso? El ex-preso.",
   "Aro, aro, aro... ¿Quién quiere que le cuente un chiste?",
@@ -225,7 +222,7 @@ var CHISTES = [
   "Jaimito, ¿qué es una tontería? - Pues un tonel muy pequeño.",
   "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito.",
   "¿Qué hace una abeja en el gimnasio? Zumba.",
-  "Jaimito, ¿por qué llega tarde a clase? - Porque el cartel de la escuela decía 'Cuidado con los niños'.",
+  "Jaimito, ¿por qué llega tarde a clase? - Porque el cartel decía 'Cuidado con los niños'.",
   "¿Qué es un fantasma que no da miedo? Un fantasma respetuoso.",
   "¿Cómo se llama el hermano del pan? El pancito.",
   "Jaimito, ¿qué es una letra? - Una vaca que da leche.",
@@ -233,36 +230,56 @@ var CHISTES = [
   "Aro aro aro... ¿Qué le dijo un grano a otro? Nos vemos en el barro."
 ];
 
-function mostrarChiste() {
-  var c = CHISTES[Math.floor(Math.random() * CHISTES.length)];
-  document.getElementById('chiste-box').textContent = "😂 " + c;
-}
+var DATOS_CURIOSOS = [
+  "Los pulpos tienen tres corazones.",
+  "Un rayo es 5 veces más caliente que la superficie del Sol.",
+  "Las abejas pueden reconocer rostros humanos.",
+  "La miel nunca se echa a perder, se puede comer milenaria.",
+  "El corazón de una ballena azul es del tamaño de un coche pequeño.",
+  "Los flamencos son rosas por los camarones que comen.",
+  "Es imposible estornudar con los ojos abiertos.",
+  "La Tierra es el único planeta no llamado como un dios.",
+  "Los delfines duermen con un ojo abierto.",
+  "Las jirafas duermen solo 2 horas al día.",
+  "El sonido no viaja en el espacio, es un vacío silencioso.",
+  "Los plátanos son bayas, pero las fresas no.",
+  "Un día en Venus es más largo que un año en Venus.",
+  "Los gatos no pueden saborear lo dulce.",
+  "El metal más abundante en la corteza terrestre es el aluminio."
+];
 
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-// ---------- Reloj, Saludo y Fiesta ----------
+// ---------- RELOJ Y SALUDO ----------
 function actualizarReloj() {
   var ahora = new Date();
   document.getElementById('clock').innerHTML = pad(ahora.getHours()) + ':' + pad(ahora.getMinutes()) + '<span class="seconds">:' + pad(ahora.getSeconds()) + '</span>';
   document.getElementById('date').textContent = DIAS_SEMANA[ahora.getDay()] + ', ' + ahora.getDate() + ' de ' + MESES[ahora.getMonth()];
 
   var face = document.getElementById('face'), h = ahora.getHours();
-  if (!document.body.classList.contains('cine-mode')) {
-    face.classList.remove('manana', 'tarde', 'noche');
-    if (h >= 6 && h < 12) face.classList.add('manana');
-    else if (h >= 12 && h < 20) face.classList.add('tarde');
-    else face.classList.add('noche');
+  face.classList.remove('manana', 'tarde', 'noche');
+  if (h >= 6 && h < 12) face.classList.add('manana');
+  else if (h >= 12 && h < 20) face.classList.add('tarde');
+  else face.classList.add('noche');
+
+  // Contador
+  var hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  var meta = new Date(EVENTO_FUTURO.anio, EVENTO_FUTURO.mes, EVENTO_FUTURO.dia);
+  var diffDias = Math.ceil((meta - hoy) / (1000 * 60 * 60 * 24));
+  if (diffDias > 0) {
+    document.getElementById('countdown').textContent = 'Faltan ' + diffDias + ' días para ' + EVENTO_FUTURO.texto;
+  } else {
+    document.getElementById('countdown').textContent = '';
   }
 }
 
-// ---------- Voz ----------
+// ---------- VOZ ----------
 var vozDisponible = false, vozElegida = null;
 if (window.speechSynthesis) {
   vozDisponible = true;
   var loadVoices = function() { var v = speechSynthesis.getVoices(); if(v.length) { for(var i=0; i<v.length; i++){ if(v[i].lang.indexOf('es')===0){ vozElegida = v[i]; return; } } vozElegida = v[0]; } };
   loadVoices(); speechSynthesis.onvoiceschanged = loadVoices;
 }
-
 function hablar(texto) {
   if (!vozDisponible) return;
   try {
@@ -275,56 +292,45 @@ function hablar(texto) {
     speechSynthesis.speak(u);
   } catch(e) {}
 }
-
 function decirHola() {
-  hablar('¡Hola familia! No os olvidéis de mirar la pizarra de notas y el calendario.');
+  var h = new Date().getHours();
+  var saludo = "¡Hola Arwen! ";
+  if (h < 12) saludo += "¡Buenos días!";
+  else if (h < 20) saludo += "¡Buenas tardes!";
+  else saludo += "¡Buenas noches!";
+  hablar(saludo);
 }
 
-// ---------- Modo Cine ----------
-var timerInterval = null;
-function toggleCine() {
-  var body = document.body;
-  body.classList.toggle('cine-mode');
-  
-  if (body.classList.contains('cine-mode')) {
-    // Iniciar cuenta atrás de 2h
-    var time = 2 * 60 * 60;
-    document.getElementById('timer-display').textContent = "02:00:00";
-    hablar('Modo cine activado. ¡A disfrutar de la película!');
-    
-    timerInterval = setInterval(function() {
-      time--;
-      var h = Math.floor(time / 3600);
-      var m = Math.floor((time % 3600) / 60);
-      var s = time % 60;
-      document.getElementById('timer-display').textContent = pad(h)+':'+pad(m)+':'+pad(s);
-      if (time <= 0) { clearInterval(timerInterval); toggleCine(); }
-    }, 1000);
-  } else {
-    clearInterval(timerInterval);
-    hablar('Saliendo del modo cine.');
+// ---------- MODO DESCANSO ----------
+function toggleSleep() {
+  document.body.classList.toggle('sleep-mode');
+  if (!document.body.classList.contains('sleep-mode')) {
+    decirHola();
   }
 }
 
-// ---------- Batería ----------
+// ---------- BATERÍA ----------
 function actualizarBateria() {
   if (navigator.getBattery) {
     navigator.getBattery().then(function(battery) {
       function updateAll() {
         var level = Math.round(battery.level * 100);
         var bar = document.getElementById('battery-level'), text = document.getElementById('battery-text');
-        bar.style.width = level + '%'; text.textContent = level + '%';
-        if (level > 50) bar.style.background = '#4ade80';
-        else if (level > 20) bar.style.background = '#fbbf24';
-        else bar.style.background = '#ef4444';
+        if(bar && text) {
+          bar.style.width = level + '%'; text.textContent = level + '%';
+          if (level > 50) bar.style.background = '#4ade80';
+          else if (level > 20) bar.style.background = '#fbbf24';
+          else bar.style.background = '#ef4444';
+        }
       }
       updateAll(); battery.addEventListener('levelchange', updateAll);
     });
-  } else { document.querySelector('.battery-block').style.display = 'none'; }
+  }
 }
 
-// ---------- Clima ----------
+// ---------- CLIMA ----------
 var WMO_CODES = {0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado', 45: 'Niebla', 48: 'Niebla helada', 51: 'Llovizna', 53: 'Llovizna', 55: 'Llovizna fuerte', 61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia fuerte', 71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve fuerte', 80: 'Chubascos', 81: 'Chubascos', 82: 'Chubascos fuertes', 95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte'};
+
 function actualizarClima() {
   fetch('https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON + '&current_weather=true&timezone=auto', { cache: 'no-store' })
     .then(function(r) { return r.json(); })
@@ -337,7 +343,7 @@ function actualizarClima() {
     }).catch(function() {});
 }
 
-// ---------- Calendario ----------
+// ---------- CALENDARIO ----------
 function parseICSDate(str) {
   if (!str) return null; str = str.trim();
   if (str.length === 8) return { date: new Date(parseInt(str.substr(0,4),10), parseInt(str.substr(4,2),10)-1, parseInt(str.substr(6,2),10)), allDay: true };
@@ -385,4 +391,56 @@ function renderizarEventos() {
     else if (d.toDateString() === ahora.toDateString()) dia = 'Hoy';
     else { var m = new Date(ahora); m.setDate(m.getDate()+1); if(d.toDateString() === m.toDateString()) dia = 'Mañana'; }
     html += '<li class="event-item' + (e.allDay ? ' all-day' : '') + '"><div class="event-time"><span class="day">'+dia+'</span>'+h+'</div><div class="event-title">'+e.summary+'</div></li>';
+  }
+  lista.innerHTML = html;
+}
+
+// ---------- AVISOS ----------
+var avisosHechos = {};
+function comprobarAvisos() {
+  if (!vozDisponible) return;
+  var ahora = new Date(), umbralMs = AVISO_MIN * 60 * 1000;
+  for (var i = 0; i < eventosCache.length; i++) {
+    var ev = eventosCache[i], diff = ev.start.getTime() - ahora.getTime();
+    if (!ev.allDay && diff > 0 && diff <= umbralMs) {
+      var c = ev.start.getTime() + '|' + ev.summary + '_pre';
+      if (!avisosHechos[c]) { avisosHechos[c] = true; hablar('En ' + Math.round(diff/60000) + ' minutos: ' + ev.summary); }
+    }
+    if (!ev.allDay && diff <= 0 && diff > -60000) {
+      var c2 = ev.start.getTime() + '|' + ev.summary + '_cero';
+      if (!avisosHechos[c2]) { avisosHechos[c2] = true; hablar('Atención, es la hora de: ' + ev.summary); }
+    }
+  }
+}
+
+// ---------- NOTAS Y EXTRAS ----------
+function cargarNotas() { var g = localStorage.getItem('panel_familiar_notas'); if (g !== null) document.getElementById('notes').value = g; }
+function guardarNotas() {
+  localStorage.setItem('panel_familiar_notas', document.getElementById('notes').value);
+  var hint = document.getElementById('notes-hint'); hint.textContent = 'Guardado ✓'; hint.classList.add('saved');
+  setTimeout(function() { hint.textContent = 'Se guardan automáticamente'; hint.classList.remove('saved'); }, 2000);
+}
+
+function mostrarExtras() {
+  document.getElementById('chiste-box').textContent = "😂 " + CHISTES[Math.floor(Math.random() * CHISTES.length)];
+  document.getElementById('dato-box').textContent = "💡 ¿Sabías que...? " + DATOS_CURIOSOS[Math.floor(Math.random() * DATOS_CURIOSOS.length)];
+}
+
+// ---------- ARRANQUE ----------
+function iniciar() {
+  actualizarReloj(); setInterval(actualizarReloj, 1000);
+  actualizarBateria();
+  actualizarClima(); setInterval(actualizarClima, 10 * 60 * 1000);
+  cargarCalendario(); setInterval(cargarCalendario, 5 * 60 * 1000);
+  setInterval(comprobarAvisos, 30 * 1000);
+  cargarNotas(); document.getElementById('notes').addEventListener('input', guardarNotas);
+  mostrarExtras();
   
+  document.addEventListener('touchstart', function() {
+    if (vozDisponible) { try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e){} }
+  }, { once: true, passive: true });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
+</script>
+</body>
+</html>
