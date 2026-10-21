@@ -358,4 +358,90 @@ function parsearICS(texto) {
     if (l === 'BEGIN:VEVENT') { dentro = true; actual = {}; }
     else if (l === 'END:VEVENT') { if (actual.start && actual.summary) eventos.push(actual); dentro = false; }
     else if (dentro) {
-      if (l.in
+      if (l.indexOf('STATUS:CANCELLED') === 0) actual.cancelado = true;
+      if (l.indexOf('DTSTART') === 0) { var p = parseICSDate(l.split(':')[1]); if(p) { actual.start = p.date; actual.allDay = p.allDay; } }
+      if (l.indexOf('SUMMARY:') === 0) actual.summary = l.substr(8).trim().replace(/\\,/g, ',');
+    }
+  }
+  return eventos;
+}
+var eventosCache = [];
+function cargarCalendario() {
+  fetch(ICS_URL, { cache: 'no-store' }).then(function(r) { return r.text(); }).then(function(texto) {
+    eventosCache = parsearICS(texto).filter(function(e) { return !e.cancelado; });
+    eventosCache.sort(function(a, b) { return a.start - b.start; });
+    renderizarEventos(); comprobarAvisos();
+  }).catch(function() { document.getElementById('events-list').innerHTML = '<li class="empty">No se pudo cargar</li>'; });
+}
+function renderizarEventos() {
+  var lista = document.getElementById('events-list'), ahora = new Date(), proximos = [];
+  for (var i = 0; i < eventosCache.length; i++) {
+    var ev = eventosCache[i], fin = new Date(ev.start.getTime());
+    if (ev.allDay) fin.setHours(23, 59, 59); else fin.setHours(fin.getHours() + 1);
+    if (fin >= ahora) { proximos.push(ev); if (proximos.length >= 5) break; }
+  }
+  if (proximos.length === 0) { lista.innerHTML = '<li class="empty">Sin eventos próximos</li>'; return; }
+  var html = '';
+  for (var j = 0; j < proximos.length; j++) {
+    var e = proximos[j], d = e.start, h = pad(d.getHours()) + ':' + pad(d.getMinutes()), dia = DIAS_CORTOS[d.getDay()] + ' ' + d.getDate();
+    if (e.allDay) h = 'Todo el día';
+    else if (d.toDateString() === ahora.toDateString()) dia = 'Hoy';
+    else { var m = new Date(ahora); m.setDate(m.getDate()+1); if(d.toDateString() === m.toDateString()) dia = 'Mañana'; }
+    html += '<li class="event-item' + (e.allDay ? ' all-day' : '') + '"><div class="event-time"><span class="day">'+dia+'</span>'+h+'</div><div class="event-title">'+e.summary+'</div></li>';
+  }
+  lista.innerHTML = html;
+}
+
+var avisosHechos = {};
+function comprobarAvisos() {
+  if (!vozDisponible) return;
+  var ahora = new Date(), umbralMs = AVISO_MIN * 60 * 1000;
+  for (var i = 0; i < eventosCache.length; i++) {
+    var ev = eventosCache[i], diff = ev.start.getTime() - ahora.getTime();
+    if (!ev.allDay && diff > 0 && diff <= umbralMs) {
+      var c = ev.start.getTime() + '|' + ev.summary + '_pre';
+      if (!avisosHechos[c]) { avisosHechos[c] = true; hablar('En ' + Math.round(diff/60000) + ' minutos: ' + ev.summary); }
+    }
+    if (!ev.allDay && diff <= 0 && diff > -60000) {
+      var c2 = ev.start.getTime() + '|' + ev.summary + '_cero';
+      if (!avisosHechos[c2]) { avisosHechos[c2] = true; hablar('Atención, es la hora de: ' + ev.summary); }
+    }
+  }
+}
+
+function cargarNotas() { var g = localStorage.getItem('panel_familiar_notas'); if (g !== null) document.getElementById('notes').value = g; }
+function guardarNotas() {
+  localStorage.setItem('panel_familiar_notas', document.getElementById('notes').value);
+  var hint = document.getElementById('notes-hint'); hint.textContent = 'Guardado ✓'; hint.classList.add('saved');
+  setTimeout(function() { hint.textContent = 'Se guardan solas'; hint.classList.remove('saved'); }, 2000);
+}
+
+function mostrarExtras() {
+  document.getElementById('chiste-box').textContent = "😂 " + CHISTES[Math.floor(Math.random() * CHISTES.length)];
+  document.getElementById('dato-box').textContent = "💡 ¿Sabías que...? " + DATOS_CURIOSOS[Math.floor(Math.random() * DATOS_CURIOSOS.length)];
+}
+
+function iniciar() {
+  actualizarReloj(); setInterval(actualizarReloj, 1000);
+  actualizarBateria();
+  actualizarClima(); setInterval(actualizarClima, 10 * 60 * 1000);
+  cargarCalendario(); setInterval(cargarCalendario, 5 * 60 * 1000);
+  setInterval(comprobarAvisos, 30 * 1000);
+  cargarNotas(); document.getElementById('notes').addEventListener('input', guardarNotas);
+  mostrarExtras();
+  
+  // Forzar el desbloqueo del audio al primer toque
+  document.addEventListener('touchstart', function() {
+    if (vozDisponible) { 
+      try { 
+        var u = new SpeechSynthesisUtterance(' '); 
+        u.volume = 0; 
+        speechSynthesis.speak(u); 
+      } catch(e){} 
+    }
+  }, { once: true, passive: true });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
+</script>
+</body>
+</html>
