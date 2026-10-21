@@ -9,10 +9,11 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body {
     width: 100%; height: 100%; overflow: hidden;
-    background: #0f1419; color: #e8eef5;
+    /* Fondo más cálido y con degradado */
+    background: linear-gradient(135deg, #101b2b 0%, #1e1b3a 100%);
+    color: #e8eef5;
     font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
-    transition: background 0.5s ease;
   }
 
   /* MODO DESCANSO */
@@ -21,31 +22,39 @@
   body.sleep-mode .wake-overlay { display: block; }
   .wake-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; cursor: pointer; }
 
-  .panel { display: grid; grid-template-rows: auto 1fr; height: 100vh; padding: 14px; gap: 12px; }
+  /* DISEÑO ADAPTABLE (Vertical u Horizontal sin girar la pantalla) */
+  .panel { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100vh; 
+    padding: 12px; 
+    gap: 12px; 
+    overflow-y: auto;
+  }
 
   /* PANEL SUPERIOR */
   .top-row {
-    display: grid; grid-template-columns: auto 1fr auto auto; 
-    align-items: center; gap: 20px;
-    background: linear-gradient(135deg, #1a2332 0%, #141b26 100%);
-    border-radius: 14px; padding: 14px 22px; border: 1px solid #253142;
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 16px; padding: 15px 20px; border: 1px solid rgba(255,255,255,0.1);
   }
 
-  /* CARITA (Ahora es redonda y simétrica) */
+  /* CARITA ANIMADA (Respira) */
   .face-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .face-container {
     width: 75px; height: 75px; background: #facc15; border-radius: 50%;
     position: relative; display: flex; justify-content: center; align-items: center;
-    box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1); transition: background 0.5s, transform 0.3s;
+    box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), 0 0 20px rgba(250, 204, 21, 0.3);
     cursor: pointer;
+    animation: breathe 3s infinite ease-in-out;
   }
   .face-container:active { transform: scale(0.95); }
   .face-container.manana { background: #fbbf24; } 
   .face-container.tarde { background: #facc15; } 
-  .face-container.noche { background: #818cf8; }
-  
-  /* Animación de baile */
-  .face-container.speaking { animation: dance 0.6s infinite alternate; }
+  .face-container.noche { background: #818cf8; box-shadow: 0 0 20px rgba(129, 140, 248, 0.4); }
+  .face-container.speaking { animation: dance 0.4s infinite alternate; }
   
   .eyes { display: flex; gap: 15px; position: absolute; top: 22px; }
   .eye { width: 9px; height: 14px; background: #1a2332; border-radius: 50%; animation: blink 4s infinite; transform-origin: center; }
@@ -55,79 +64,83 @@
   @keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.1); } }
   @keyframes talk { 0% { height: 12px; } 100% { height: 22px; } }
   @keyframes dance { 0% { transform: translateY(0) rotate(-10deg); } 100% { transform: translateY(-10px) rotate(10deg); } }
+  @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-  .btn-hola { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: bold; cursor: pointer; }
-  .btn-hola:active { background: #2563eb; }
+  .btn-hola { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); }
+  .btn-hola:active { background: #2563eb; transform: translateY(2px); }
 
   /* RELOJ */
-  .clock-block { text-align: center; }
-  .clock-block .clock { font-size: 75px; font-weight: 300; letter-spacing: -2px; line-height: 1; color: #ffffff; font-variant-numeric: tabular-nums; }
-  .clock-block .clock .seconds { font-size: 30px; color: #6b87a8; }
-  .clock-block .date { font-size: 18px; color: #8aa2bd; margin-top: 4px; text-transform: capitalize; }
+  .clock-block { text-align: center; flex: 1; }
+  .clock-block .clock { font-size: 65px; font-weight: 300; letter-spacing: -2px; line-height: 1; color: #ffffff; font-variant-numeric: tabular-nums; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+  .clock-block .clock .seconds { font-size: 25px; color: #a78bfa; }
+  .clock-block .date { font-size: 16px; color: #9ca3af; margin-top: 4px; text-transform: capitalize; font-weight: 500; }
 
   /* CLIMA Y CONTADOR */
-  .weather-block { text-align: right; min-width: 130px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
-  .weather-info .temp { font-size: 45px; font-weight: 300; color: #ffffff; line-height: 1; }
-  .weather-info .temp .unit { font-size: 22px; color: #8aa2bd; vertical-align: top; }
-  .weather-info .desc { font-size: 14px; color: #8aa2bd; text-transform: capitalize; margin-top: 2px; }
-  .weather-info .city { font-size: 11px; color: #55687d; }
+  .weather-block { text-align: right; min-width: 120px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+  .weather-info .temp { font-size: 40px; font-weight: 300; color: #ffffff; line-height: 1; }
+  .weather-info .temp .unit { font-size: 20px; color: #a78bfa; vertical-align: top; }
+  .weather-info .desc { font-size: 13px; color: #9ca3af; text-transform: capitalize; margin-top: 2px; }
+  .weather-info .city { font-size: 11px; color: #6b7280; }
   .weather-info .countdown { font-size: 12px; color: #fbbf24; margin-top: 4px; font-weight: bold; }
-  .btn-sleep { font-size: 24px; background: none; border: none; cursor: pointer; opacity: 0.6; }
+  .btn-sleep { font-size: 22px; background: none; border: none; cursor: pointer; opacity: 0.6; }
 
   /* BATERÍA */
-  .battery-block { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 40px; }
-  .battery-icon { width: 30px; height: 14px; border: 2px solid #8aa2bd; border-radius: 3px; position: relative; padding: 2px; }
-  .battery-icon::after { content: ''; position: absolute; right: -5px; top: 3px; width: 3px; height: 6px; background: #8aa2bd; border-radius: 0 2px 2px 0; }
+  .battery-block { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+  .battery-icon { width: 28px; height: 12px; border: 2px solid #6b7280; border-radius: 3px; position: relative; padding: 2px; }
+  .battery-icon::after { content: ''; position: absolute; right: -5px; top: 2px; width: 3px; height: 4px; background: #6b7280; border-radius: 0 2px 2px 0; }
   .battery-level { height: 100%; background: #4ade80; border-radius: 1px; transition: width 0.5s, background 0.5s; }
-  .battery-text { font-size: 11px; color: #8aa2bd; font-weight: bold; }
+  .battery-text { font-size: 10px; color: #9ca3af; font-weight: bold; }
 
-  /* DISEÑO INFERIOR EN 2 COLUMNAS (Armonioso) */
+  /* DISEÑO INFERIOR (2 Columnas si hay espacio, 1 si es estrecho) */
   .bottom-row { 
     display: grid; 
-    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    grid-template-columns: 1fr 1fr;
     gap: 12px; 
+    flex: 1;
     min-height: 0; 
   }
   
-  .card { background: linear-gradient(135deg, #1a2332 0%, #141b26 100%); border-radius: 14px; padding: 12px 16px; border: 1px solid #253142; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-  .card-title { font-size: 14px; font-weight: 600; color: #6b87a8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #253142; flex-shrink: 0; }
+  .card { 
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(10px);
+    border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); 
+    display: flex; flex-direction: column; min-height: 0; overflow: hidden; 
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  .card-title { font-size: 13px; font-weight: 600; color: #a78bfa; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(167, 139, 250, 0.2); flex-shrink: 0; }
 
-  /* Columna Izquierda: Eventos (Mitad superior) + Chistes (Mitad inferior) */
-  .left-column { display: grid; grid-template-rows: 1fr 1fr; gap: 12px; min-height: 0; }
+  /* Columna Izquierda: Eventos y Chistes */
+  .left-column { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
   
+  .events-card { flex: 1; }
   .events-list { list-style: none; overflow-y: auto; flex: 1; min-height: 0; padding-right: 4px; }
-  .event-item { display: grid; grid-template-columns: 60px 1fr; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed #1f2a3a; }
-  .event-time { font-size: 12px; color: #6b87a8; }
-  .event-time .day { display: block; font-size: 10px; color: #4a6079; }
-  .event-title { font-size: 15px; color: #e8eef5; }
-  .empty { color: #55687d; font-size: 14px; padding: 10px 0; font-style: italic; }
+  .events-list::-webkit-scrollbar { width: 4px; }
+  .events-list::-webkit-scrollbar-thumb { background: #a78bfa; border-radius: 2px; }
+  .event-item { display: grid; grid-template-columns: 55px 1fr; gap: 10px; align-items: baseline; padding: 8px 0; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+  .event-time { font-size: 12px; color: #a78bfa; font-weight: 600; }
+  .event-time .day { display: block; font-size: 10px; color: #9ca3af; }
+  .event-title { font-size: 15px; color: #f3f4f6; }
+  .empty { color: #6b7280; font-size: 14px; padding: 10px 0; font-style: italic; }
 
-  .fun-card { justify-content: center; text-align: center; }
-  .chiste-text { font-size: 18px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 10px; }
-  .dato-text { font-size: 15px; color: #a78bfa; font-style: italic; line-height: 1.3; }
+  /* Tarjeta de Chistes y Datos */
+  .fun-card { flex: 1; justify-content: center; text-align: center; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%); border: 1px solid rgba(251, 191, 36, 0.3); }
+  .chiste-text { font-size: 18px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 12px; }
+  .dato-text { font-size: 15px; color: #c4b5fd; font-style: italic; line-height: 1.3; }
 
-  /* Columna Derecha: Notas familiares (Ocupa toda la altura) */
-  .notes-area { flex: 1; width: 100%; background: #0b1016; color: #e8eef5; border: 1px solid #253142; border-radius: 8px; padding: 10px; font-size: 16px; line-height: 1.4; font-family: inherit; resize: none; outline: none; min-height: 0; }
-  .notes-hint { font-size: 11px; color: #4a6079; margin-top: 4px; text-align: right; flex-shrink: 0; transition: color 0.3s; }
+  /* Columna Derecha: Notas */
+  .notes-area { flex: 1; width: 100%; background: rgba(0,0,0,0.2); color: #f3f4f6; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; font-size: 16px; line-height: 1.5; font-family: inherit; resize: none; outline: none; min-height: 0; transition: border-color 0.3s; }
+  .notes-area:focus { border-color: #a78bfa; }
+  .notes-hint { font-size: 11px; color: #6b7280; margin-top: 6px; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .notes-hint.saved { color: #4ade80; }
 
-  @media (max-width: 800px) {
-    .top-row { grid-template-columns: auto 1fr auto; padding: 10px; gap: 10px; }
-    .battery-block { display: none; }
+  /* RESPONSIVE: Si la pantalla es vertical o pequeña */
+  @media (max-width: 800px), (orientation: portrait) {
+    .bottom-row { grid-template-columns: 1fr; }
+    .left-column { flex-direction: row; flex-wrap: wrap; }
+    .events-card { flex: 1 1 100%; }
+    .fun-card { flex: 1 1 100%; }
     .clock-block .clock { font-size: 50px; }
-    .clock-block .clock .seconds { font-size: 22px; }
-    .weather-info .temp { font-size: 35px; }
-    .face-container { width: 60px; height: 60px; }
-    .eyes { top: 18px; gap: 12px; }
-    .eye { width: 8px; height: 12px; }
-    .mouth { bottom: 12px; width: 20px; height: 8px; }
-    
-    .bottom-row { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-    .left-column { grid-template-rows: 1fr; }
-    .events-list { display: flex; flex-direction: row; overflow-x: auto; gap: 10px; }
-    .event-item { border-bottom: none; border-right: 1px dashed #1f2a3a; padding: 0 10px; min-width: 120px; }
-    .chiste-text { font-size: 16px; }
-    .dato-text { font-size: 14px; }
+    .top-row { justify-content: center; }
   }
 </style>
 </head>
@@ -167,25 +180,24 @@
     </div>
   </div>
 
-  <!-- DISEÑO INFERIOR EN 2 COLUMNAS -->
+  <!-- DISEÑO INFERIOR -->
   <div class="bottom-row">
     
-    <!-- Columna Izquierda: Eventos (arriba) y Chistes (abajo) -->
     <div class="left-column">
-      <div class="card">
+      <div class="card events-card">
         <div class="card-title">Próximos eventos</div>
         <ul class="events-list" id="events-list"><li class="empty">Cargando...</li></ul>
       </div>
+      
       <div class="card fun-card">
-        <div class="chiste-text" id="chiste-box"></div>
-        <div class="dato-text" id="dato-box"></div>
+        <div class="chiste-text" id="chiste-box">Cargando chiste...</div>
+        <div class="dato-text" id="dato-box">Cargando dato...</div>
       </div>
     </div>
 
-    <!-- Columna Derecha: Notas -->
     <div class="card">
       <div class="card-title">Notas familiares</div>
-      <textarea class="notes-area" id="notes" placeholder="Escribe aquí..."></textarea>
+      <textarea class="notes-area" id="notes" placeholder="Escribe aquí un mensaje para la familia..."></textarea>
       <div class="notes-hint" id="notes-hint">Se guardan automáticamente</div>
     </div>
 
@@ -196,7 +208,9 @@
 /* ============================================================
    CONFIGURACIÓN
    ============================================================ */
+// Enlace de Zoho directo (el que sé que funcionó)
 var ICS_URL = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://calendar.zoho.eu/ical/0801124aaacfb956572a96ba7aff45bc0000299d45a5771512967b2d8f19afec8253e8336b5ce1ce89cf81f6dc8b643ac7f8e1cf49b45c1ca4245a0ef6cd28a117efee958e7a652117409e68ad41');
+
 var LAT = 44.8150;
 var LON = 7.2450;
 var CIUDAD = 'Luserna San Giovanni';
@@ -209,95 +223,59 @@ var DIAS_SEMANA = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
 var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var DIAS_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-// ---------- 30 CHISTES ----------
 var CHISTES = [
-  "¿Sabes cuál es el café más peligroso? El ex-preso.",
-  "Aro, aro, aro... ¿Quién quiere que le cuente un chiste?",
-  "Jaimito, ¿qué es un polígono? Pues un loro policía.",
-  "¿Cómo se llama el primo de un pez? El pez primo.",
-  "¿Qué le dice un semáforo a otro? No me mires que me estoy cambiando.",
-  "Jaimito, ¿qué es la A? - La vecina del abecedario.",
-  "¿Cuál es el animal que tiene más dientes? El ratón Pérez.",
-  "Jaimito, ¿qué es un hámster? - Un hamster... pero en grande.",
-  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies.",
-  "¿Qué hace un pez en el agua? Pues nadar.",
-  "¿Qué le dice una pared a otra? Nos vemos en la esquina.",
-  "Jaimito, ¿qué es una tontería? - Pues un tonel muy pequeño.",
-  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito.",
-  "¿Qué hace una abeja en el gimnasio? Zumba.",
-  "Jaimito, ¿por qué llega tarde a clase? - Porque el cartel decía 'Cuidado con los niños'.",
-  "¿Qué es un fantasma que no da miedo? Un fantasma respetuoso.",
-  "¿Cómo se llama el hermano del pan? El pancito.",
-  "Jaimito, ¿qué es una letra? - Una vaca que da leche.",
-  "¿Qué hace un cocodrilo en el avión? Pues el piloto.",
-  "¿Qué le dijo un grano a otro? Nos vemos en el barro.",
-  "¿Cómo se llama el perro que no ladra? Un perro mudo.",
-  "Jaimito, ¿qué es un elefante? Un ratón con abrigo de piel.",
-  "¿Qué le dice un jaguar a otro? Jaguar tú?",
-  "¿Cuál es el colmo de un jardinero? Que su hija sea una margarita.",
-  "¿Qué hace un perro con un hueso en la cabeza? Se rasca.",
-  "Jaimito, ¿qué es el mar? Un charco muy grande.",
-  "¿Qué le dice una iguana a otra? Iguana a tu casa.",
-  "¿Cómo se llama el hijo del rey? El príncipe.",
-  "¿Qué hace un soltero en el circo? Pues buscar novia.",
-  "Jaimito, ¿qué es un mosquito? Un bicho que te pica y te deja marca."
+  "¿Sabes cuál es el café más peligroso? El ex-preso.", "Aro, aro, aro... ¿Quién quiere que le cuente un chiste?",
+  "Jaimito, ¿qué es un polígono? Pues un loro policía.", "¿Cómo se llama el primo de un pez? El pez primo.",
+  "¿Qué le dice un semáforo a otro? No me mires que me estoy cambiando.", "Jaimito, ¿qué es la A? - La vecina del abecedario.",
+  "¿Cuál es el animal que tiene más dientes? El ratón Pérez.", "Jaimito, ¿qué es un hámster? - Un hamster... pero en grande.",
+  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies.", "¿Qué hace un pez en el agua? Pues nadar.",
+  "¿Qué le dice una pared a otra? Nos vemos en la esquina.", "Jaimito, ¿qué es una tontería? - Pues un tonel muy pequeño.",
+  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito.", "¿Qué hace una abeja en el gimnasio? Zumba.",
+  "Jaimito, ¿por qué llega tarde a clase? - Porque el cartel decía 'Cuidado con los niños'.", "¿Qué es un fantasma que no da miedo? Un fantasma respetuoso.",
+  "¿Cómo se llama el hermano del pan? El pancito.", "Jaimito, ¿qué es una letra? - Una vaca que da leche.",
+  "¿Qué hace un cocodrilo en el avión? Pues el piloto.", "¿Qué le dijo un grano a otro? Nos vemos en el barro.",
+  "¿Cómo se llama el perro que no ladra? Un perro mudo.", "Jaimito, ¿qué es un elefante? Un ratón con abrigo de piel.",
+  "¿Qué le dice un jaguar a otro? Jaguar tú?", "¿Cuál es el colmo de un jardinero? Que su hija sea una margarita.",
+  "¿Qué hace un perro con un hueso en la cabeza? Se rasca.", "Jaimito, ¿qué es el mar? Un charco muy grande.",
+  "¿Qué le dice una iguana a otra? Iguana a tu casa.", "¿Cómo se llama el hijo del rey? El príncipe.",
+  "¿Qué hace un soltero en el circo? Pues buscar novia.", "Jaimito, ¿qué es un mosquito? Un bicho que te pica y te deja marca."
 ];
 
-// ---------- 30 DATOS CURIOSOS ----------
 var DATOS_CURIOSOS = [
-  "Los pulpos tienen tres corazones.",
-  "Un rayo es 5 veces más caliente que la superficie del Sol.",
-  "Las abejas pueden reconocer rostros humanos.",
-  "La miel nunca se echa a perder, se puede comer milenaria.",
-  "El corazón de una ballena azul es del tamaño de un coche pequeño.",
-  "Los flamencos son rosas por los camarones que comen.",
-  "Es imposible estornudar con los ojos abiertos.",
-  "La Tierra es el único planeta no llamado como un dios.",
-  "Los delfines duermen con un ojo abierto.",
-  "Las jirafas duermen solo 2 horas al día.",
-  "El sonido no viaja en el espacio, es un vacío silencioso.",
-  "Los plátanos son bayas, pero las fresas no.",
-  "Un día en Venus es más largo que un año en Venus.",
-  "Los gatos no pueden saborear lo dulce.",
-  "El metal más abundante en la corteza terrestre es el aluminio.",
-  "Los humanos comparten el 60% de su ADN con los plátanos.",
-  "El ojo del avestruz es más grande que su cerebro.",
-  "Las hormigas no tienen pulmones.",
-  "Los tiburones existían antes que los árboles.",
-  "El animal más ruidoso del océano es el camarón pistola.",
-  "Las huellas dactilares de los koalas son casi idénticas a las humanas.",
-  "Un caracol puede dormir durante 3 años.",
-  "Los cuervos pueden recordar rostros humanos.",
-  "El planeta más caliente no es Mercurio, es Venus.",
-  "Las mariposas saborean con los pies.",
-  "Los camellos tienen tres párpados.",
-  "El corazón humano late unas 100.000 veces al día.",
-  "Un relámpago puede alcanzar los 30.000 grados.",
-  "Los pingüinos le proponen matrimonio a su pareja con una piedra.",
-  "El cuerpo humano brilla en la oscuridad, pero muy poco para verlo."
+  "Los pulpos tienen tres corazones.", "Un rayo es 5 veces más caliente que la superficie del Sol.",
+  "Las abejas pueden reconocer rostros humanos.", "La miel nunca se echa a perder, se puede comer milenaria.",
+  "El corazón de una ballena azul es del tamaño de un coche pequeño.", "Los flamencos son rosas por los camarones que comen.",
+  "Es imposible estornudar con los ojos abiertos.", "La Tierra es el único planeta no llamado como un dios.",
+  "Los delfines duermen con un ojo abierto.", "Las jirafas duermen solo 2 horas al día.",
+  "El sonido no viaja en el espacio, es un vacío silencioso.", "Los plátanos son bayas, pero las fresas no.",
+  "Un día en Venus es más largo que un año en Venus.", "Los gatos no pueden saborear lo dulce.",
+  "El metal más abundante en la corteza terrestre es el aluminio.", "Los humanos comparten el 60% de su ADN con los plátanos.",
+  "El ojo del avestruz es más grande que su cerebro.", "Las hormigas no tienen pulmones.",
+  "Los tiburones existían antes que los árboles.", "El animal más ruidoso del océano es el camarón pistola.",
+  "Las huellas dactilares de los koalas son casi idénticas a las humanas.", "Un caracol puede dormir durante 3 años.",
+  "Los cuervos pueden recordar rostros humanos.", "El planeta más caliente no es Mercurio, es Venus.",
+  "Las mariposas saborean con los pies.", "Los camellos tienen tres párpados.",
+  "El corazón humano late unas 100.000 veces al día.", "Un relámpago puede alcanzar los 30.000 grados.",
+  "Los pingüinos le proponen matrimonio a su pareja con una piedra.", "El cuerpo humano brilla en la oscuridad, pero muy poco para verlo."
 ];
 
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-// ---------- RELOJ Y COLOR CARITA ----------
 function actualizarReloj() {
   var ahora = new Date();
   document.getElementById('clock').innerHTML = pad(ahora.getHours()) + ':' + pad(ahora.getMinutes()) + '<span class="seconds">:' + pad(ahora.getSeconds()) + '</span>';
   document.getElementById('date').textContent = DIAS_SEMANA[ahora.getDay()] + ', ' + ahora.getDate() + ' de ' + MESES[ahora.getMonth()];
-
   var face = document.getElementById('face'), h = ahora.getHours();
   face.classList.remove('manana', 'tarde', 'noche');
-  if (h >= 6 && h < 12) face.classList.add('manana');
-  else if (h >= 12 && h < 20) face.classList.add('tarde');
-  else face.classList.add('noche');
-
+  if (h >= 6 && h < 12) face.classList.add('manana'); else if (h >= 12 && h < 20) face.classList.add('tarde'); else face.classList.add('noche');
+  
   var hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
   var meta = new Date(EVENTO_FUTURO.anio, EVENTO_FUTURO.mes, EVENTO_FUTURO.dia);
   var diffDias = Math.ceil((meta - hoy) / (1000 * 60 * 60 * 24));
   if (diffDias > 0) document.getElementById('countdown').textContent = 'Faltan ' + diffDias + ' días para ' + EVENTO_FUTURO.texto;
 }
 
-// ---------- VOZ (CON RESPALDO PARA FIRE OS) ----------
+// VOZ
 var vozDisponible = false, vozElegida = null;
 if (window.speechSynthesis) {
   vozDisponible = true;
@@ -313,27 +291,26 @@ function hablar(texto) {
     u.onstart = function() { document.getElementById('face').classList.add('speaking'); };
     u.onend = function() { document.getElementById('face').classList.remove('speaking'); };
     u.onerror = function() { document.getElementById('face').classList.remove('speaking'); };
+    
+    // El truco para forzar el audio en tablets y móviles
     speechSynthesis.speak(u);
-    setTimeout(function(){ speechSynthesis.resume(); }, 500);
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
   } catch(e) {}
 }
-
 function decirHola() {
-  var h = new Date().getHours();
-  var saludo = "¡Hola Arwen! ";
-  if (h < 12) saludo += "¡Buenos días! ¿Cómo estás?";
-  else if (h < 20) saludo += "¡Buenas tardes! ¿Cómo estás?";
-  else saludo += "¡Buenas noches! ¿Cómo estás?";
+  var h = new Date().getHours(); var saludo = "¡Hola Arwen! ";
+  if (h < 12) saludo += "¡Buenos días! ¿Cómo estás?"; else if (h < 20) saludo += "¡Buenas tardes! ¿Cómo estás?"; else saludo += "¡Buenas noches! ¿Cómo estás?";
   hablar(saludo);
 }
 
-// ---------- MODO DESCANSO ----------
 function toggleSleep() {
   document.body.classList.toggle('sleep-mode');
   if (!document.body.classList.contains('sleep-mode')) decirHola();
 }
 
-// ---------- BATERÍA ----------
+// BATERÍA
 function actualizarBateria() {
   if (navigator.getBattery) {
     navigator.getBattery().then(function(battery) {
@@ -350,7 +327,7 @@ function actualizarBateria() {
   }
 }
 
-// ---------- CLIMA ----------
+// CLIMA
 var WMO_CODES = {0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado', 45: 'Niebla', 48: 'Niebla helada', 51: 'Llovizna', 53: 'Llovizna', 55: 'Llovizna fuerte', 61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia fuerte', 71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve fuerte', 80: 'Chubascos', 81: 'Chubascos', 82: 'Chubascos fuertes', 95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte'};
 function actualizarClima() {
   fetch('https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON + '&current_weather=true&timezone=auto', { cache: 'no-store' })
@@ -363,7 +340,7 @@ function actualizarClima() {
     }).catch(function() {});
 }
 
-// ---------- CALENDARIO ----------
+// CALENDARIO
 function parseICSDate(str) {
   if (!str) return null; str = str.trim();
   if (str.length === 8) return { date: new Date(parseInt(str.substr(0,4),10), parseInt(str.substr(4,2),10)-1, parseInt(str.substr(6,2),10)), allDay: true };
@@ -381,6 +358,4 @@ function parsearICS(texto) {
     if (l === 'BEGIN:VEVENT') { dentro = true; actual = {}; }
     else if (l === 'END:VEVENT') { if (actual.start && actual.summary) eventos.push(actual); dentro = false; }
     else if (dentro) {
-      if (l.indexOf('STATUS:CANCELLED') === 0) actual.cancelado = true;
-      if (l.indexOf('DTSTART') === 0) { var p = parseICSDate(l.split(':')[1]); if(p) { actual.start = p.date; actual.allDay = p.allDay; } }
-      if (l.indexOf('SUMMARY:') 
+      if (l.in
