@@ -15,19 +15,15 @@
     transition: background 0.5s ease;
   }
 
-  /* MODO PANTALLA APAGADA (Modo Descanso) */
+  /* MODO DESCANSO */
   body.sleep-mode { background: #000000 !important; }
   body.sleep-mode .panel { opacity: 0; pointer-events: none; }
   body.sleep-mode .wake-overlay { display: block; }
-  
-  .wake-overlay {
-    display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 999; cursor: pointer;
-  }
+  .wake-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; cursor: pointer; }
 
-  .panel { display: grid; grid-template-rows: auto 1fr; height: 100vh; padding: 14px; gap: 12px; transition: opacity 0.5s; }
+  .panel { display: grid; grid-template-rows: auto 1fr; height: 100vh; padding: 14px; gap: 12px; }
 
-  /* Fila superior */
+  /* FILA SUPERIOR (Intacta) */
   .top-row {
     display: grid; grid-template-columns: auto 1fr auto auto; 
     align-items: center; gap: 20px;
@@ -48,6 +44,9 @@
   .face-container.tarde { background: #facc15; } 
   .face-container.noche { background: #818cf8; }
   
+  /* Animación de baile al hablar */
+  .face-container.speaking { animation: dance 0.6s infinite alternate; }
+  
   .eyes { display: flex; gap: 15px; position: absolute; top: 24px; }
   .eye { width: 9px; height: 14px; background: #1a2332; border-radius: 50%; animation: blink 4s infinite; transform-origin: center; }
   .mouth { width: 26px; height: 9px; background: #1a2332; border-radius: 0 0 30px 30px; position: absolute; bottom: 16px; transition: all 0.2s ease; }
@@ -55,12 +54,9 @@
   
   @keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(0.1); } }
   @keyframes talk { 0% { height: 12px; } 100% { height: 22px; } }
+  @keyframes dance { 0% { transform: translateY(0) rotate(-10deg); } 100% { transform: translateY(-10px) rotate(10deg); } }
 
-  .btn-hola {
-    background: #3b82f6; color: white; border: none; border-radius: 20px;
-    padding: 4px 12px; font-size: 12px; font-weight: bold; cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background 0.2s;
-  }
+  .btn-hola { background: #3b82f6; color: white; border: none; border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
   .btn-hola:active { background: #2563eb; }
 
   /* RELOJ */
@@ -76,9 +72,7 @@
   .weather-info .desc { font-size: 14px; color: #8aa2bd; text-transform: capitalize; margin-top: 2px; }
   .weather-info .city { font-size: 11px; color: #55687d; }
   .weather-info .countdown { font-size: 12px; color: #fbbf24; margin-top: 4px; font-weight: bold; }
-  
-  .btn-sleep { font-size: 24px; background: none; border: none; cursor: pointer; opacity: 0.6; transition: 0.3s; }
-  .btn-sleep:active { transform: scale(0.9); opacity: 1; }
+  .btn-sleep { font-size: 24px; background: none; border: none; cursor: pointer; opacity: 0.6; }
 
   /* BATERÍA */
   .battery-block { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 40px; }
@@ -87,46 +81,51 @@
   .battery-level { height: 100%; background: #4ade80; border-radius: 1px; transition: width 0.5s, background 0.5s; }
   .battery-text { font-size: 11px; color: #8aa2bd; font-weight: bold; }
 
-  /* Fila inferior */
-  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 0; }
+  /* NUEVA DISTRIBUCIÓN INFERIOR (3 Columnas) */
+  .bottom-row { 
+    display: grid; 
+    grid-template-columns: 250px 1fr 300px; /* Izq pequeña, Centro grande, Der notas */
+    gap: 12px; 
+    min-height: 0; 
+  }
+  
   .card { background: linear-gradient(135deg, #1a2332 0%, #141b26 100%); border-radius: 14px; padding: 12px 16px; border: 1px solid #253142; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-  .card-title { font-size: 15px; font-weight: 600; color: #6b87a8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #253142; flex-shrink: 0; }
+  .card-title { font-size: 14px; font-weight: 600; color: #6b87a8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #253142; flex-shrink: 0; }
 
-  /* Eventos */
+  /* Eventos (Columna Izquierda) */
   .events-list { list-style: none; overflow-y: auto; flex: 1; min-height: 0; padding-right: 4px; }
   .events-list::-webkit-scrollbar { width: 4px; }
   .events-list::-webkit-scrollbar-thumb { background: #253142; border-radius: 2px; }
-  .event-item { display: grid; grid-template-columns: 65px 1fr; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed #1f2a3a; }
+  .event-item { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 1px dashed #1f2a3a; }
   .event-item:last-child { border-bottom: none; }
-  .event-time { font-size: 13px; color: #6b87a8; font-variant-numeric: tabular-nums; }
-  .event-time .day { display: block; font-size: 11px; color: #4a6079; text-transform: capitalize; }
-  .event-title { font-size: 16px; color: #e8eef5; line-height: 1.2; word-break: break-word; }
+  .event-time { font-size: 12px; color: #6b87a8; font-weight: bold; }
+  .event-time .day { color: #4a6079; margin-right: 4px; }
+  .event-title { font-size: 15px; color: #e8eef5; line-height: 1.2; word-break: break-word; }
   .event-item.all-day .event-time { color: #e0a94a; }
-  .empty { color: #55687d; font-size: 15px; padding: 10px 0; font-style: italic; }
 
-  /* Notas y Extras */
-  .notes-area { flex: 1; width: 100%; background: #0b1016; color: #e8eef5; border: 1px solid #253142; border-radius: 8px; padding: 10px; font-size: 16px; line-height: 1.4; font-family: inherit; resize: none; outline: none; min-height: 0; transition: border-color 0.3s; }
+  /* Chistes y Datos (Columna Centro) */
+  .center-card { justify-content: center; text-align: center; padding: 20px; }
+  .chiste-text { font-size: 24px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+  .dato-text { font-size: 18px; color: #a78bfa; font-style: italic; line-height: 1.3; }
+
+  /* Notas (Columna Derecha) */
+  .notes-area { flex: 1; width: 100%; background: #0b1016; color: #e8eef5; border: 1px solid #253142; border-radius: 8px; padding: 10px; font-size: 15px; line-height: 1.4; font-family: inherit; resize: none; outline: none; min-height: 0; transition: border-color 0.3s; }
   .notes-area:focus { border-color: #3b82f6; }
   .notes-hint { font-size: 11px; color: #4a6079; margin-top: 4px; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .notes-hint.saved { color: #4ade80; }
-  
-  .info-box { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #253142; font-size: 13px; text-align: center; }
-  .chiste-text { color: #fbbf24; font-style: italic; margin-bottom: 4px; }
-  .dato-text { color: #a78bfa; font-size: 12px; }
 
   @media (max-width: 800px) {
     .top-row { grid-template-columns: auto 1fr auto; padding: 10px; gap: 10px; }
     .battery-block { display: none; }
     .clock-block .clock { font-size: 50px; }
     .clock-block .clock .seconds { font-size: 22px; }
-    .clock-block .date { font-size: 14px; }
     .weather-info .temp { font-size: 35px; }
-    .weather-info .desc, .weather-info .city { font-size: 12px; }
     .face-container { width: 60px; height: 60px; }
-    .eyes { top: 18px; gap: 12px; }
-    .eye { width: 8px; height: 12px; }
-    .mouth { bottom: 12px; width: 20px; height: 8px; }
-    .info-box { font-size: 11px; }
+    .bottom-row { grid-template-columns: 1fr; grid-template-rows: 120px 1fr; }
+    .events-list { display: flex; flex-direction: row; overflow-x: auto; gap: 10px; }
+    .event-item { border-bottom: none; border-right: 1px dashed #1f2a3a; padding: 0 10px; min-width: 120px; }
+    .chiste-text { font-size: 18px; }
+    .dato-text { font-size: 15px; }
   }
 </style>
 </head>
@@ -135,9 +134,8 @@
 <div class="wake-overlay" onclick="toggleSleep()"></div>
 
 <div class="panel">
+  <!-- PANEL SUPERIOR INTACTO -->
   <div class="top-row">
-    
-    <!-- Carita y Botón Hola Arwen -->
     <div class="face-wrapper">
       <div class="face-container" id="face" onclick="decirHola()">
         <div class="eyes"><div class="eye"></div><div class="eye"></div></div>
@@ -167,21 +165,25 @@
     </div>
   </div>
 
+  <!-- NUEVO PANEL INFERIOR -->
   <div class="bottom-row">
+    <!-- Columna Izquierda: Eventos (más pequeña) -->
     <div class="card">
       <div class="card-title">Próximos eventos</div>
-      <ul class="events-list" id="events-list"><li class="empty">Cargando calendario...</li></ul>
+      <ul class="events-list" id="events-list"><li class="empty">Cargando...</li></ul>
     </div>
 
+    <!-- Columna Central: Chistes y Datos (Grande) -->
+    <div class="card center-card">
+      <div class="chiste-text" id="chiste-box"></div>
+      <div class="dato-text" id="dato-box"></div>
+    </div>
+
+    <!-- Columna Derecha: Notas -->
     <div class="card">
       <div class="card-title">Notas familiares</div>
       <textarea class="notes-area" id="notes" placeholder="Escribe aquí..."></textarea>
       <div class="notes-hint" id="notes-hint">Se guardan automáticamente</div>
-      
-      <div class="info-box">
-        <div class="chiste-text" id="chiste-box"></div>
-        <div class="dato-text" id="dato-box"></div>
-      </div>
     </div>
   </div>
 </div>
@@ -194,10 +196,7 @@ var ICS_URL = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('
 var LAT = 44.8150;
 var LON = 7.2450;
 var CIUDAD = 'Luserna San Giovanni';
-
-// Evento cuenta atrás (Año, Mes(0-11), Día, Texto)
 var EVENTO_FUTURO = { anio: 2024, mes: 11, dia: 25, texto: 'Navidad' };
-
 var AVISO_MIN = 15;
 
 /* ============================================================ */
@@ -206,7 +205,7 @@ var DIAS_SEMANA = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
 var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var DIAS_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-// ---------- DATOS Y CHISTES ----------
+// ---------- 30 CHISTES ----------
 var CHISTES = [
   "¿Sabes cuál es el café más peligroso? El ex-preso.",
   "Aro, aro, aro... ¿Quién quiere que le cuente un chiste?",
@@ -217,7 +216,7 @@ var CHISTES = [
   "¿Cuál es el animal que tiene más dientes? El ratón Pérez.",
   "Jaimito, ¿qué es un hámster? - Un hamster... pero en grande.",
   "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies.",
-  "Aro, aro, aro... ¿Qué hace un pez en el agua? Pues nadar.",
+  "¿Qué hace un pez en el agua? Pues nadar.",
   "¿Qué le dice una pared a otra? Nos vemos en la esquina.",
   "Jaimito, ¿qué es una tontería? - Pues un tonel muy pequeño.",
   "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito.",
@@ -227,9 +226,20 @@ var CHISTES = [
   "¿Cómo se llama el hermano del pan? El pancito.",
   "Jaimito, ¿qué es una letra? - Una vaca que da leche.",
   "¿Qué hace un cocodrilo en el avión? Pues el piloto.",
-  "Aro aro aro... ¿Qué le dijo un grano a otro? Nos vemos en el barro."
+  "¿Qué le dijo un grano a otro? Nos vemos en el barro.",
+  "¿Cómo se llama el perro que no ladra? Un perro mudo.",
+  "Jaimito, ¿qué es un elefante? Un ratón con abrigo de piel.",
+  "¿Qué le dice un jaguar a otro? Jaguar tú?",
+  "¿Cuál es el colmo de un jardinero? Que su hija sea una margarita.",
+  "¿Qué hace un perro con un hueso en la cabeza? Se rasca.",
+  "Jaimito, ¿qué es el mar? Un charco muy grande.",
+  "¿Qué le dice una iguana a otra? Iguana a tu casa.",
+  "¿Cómo se llama el hijo del rey? El príncipe.",
+  "¿Qué hace un soltero en el circo? Pues buscar novia.",
+  "Jaimito, ¿qué es un mosquito? Un bicho que te pica y te deja marca."
 ];
 
+// ---------- 30 DATOS CURIOSOS ----------
 var DATOS_CURIOSOS = [
   "Los pulpos tienen tres corazones.",
   "Un rayo es 5 veces más caliente que la superficie del Sol.",
@@ -245,12 +255,27 @@ var DATOS_CURIOSOS = [
   "Los plátanos son bayas, pero las fresas no.",
   "Un día en Venus es más largo que un año en Venus.",
   "Los gatos no pueden saborear lo dulce.",
-  "El metal más abundante en la corteza terrestre es el aluminio."
+  "El metal más abundante en la corteza terrestre es el aluminio.",
+  "Los humanos comparten el 60% de su ADN con los plátanos.",
+  "El ojo del avestruz es más grande que su cerebro.",
+  "Las hormigas no tienen pulmones.",
+  "Los tiburones existían antes que los árboles.",
+  "El animal más ruidoso del océano es el camarón pistola.",
+  "Las huellas dactilares de los koalas son casi idénticas a las humanas.",
+  "Un caracol puede dormir durante 3 años.",
+  "Los cuervos pueden recordar rostros humanos.",
+  "El planeta más caliente no es Mercurio, es Venus.",
+  "Las mariposas saborean con los pies.",
+  "Los camellos tienen tres párpados.",
+  "El corazón humano late unas 100.000 veces al día.",
+  "Un relámpago puede alcanzar los 30.000 grados.",
+  "Los pingüinos le proponen matrimonio a su pareja con una piedra.",
+  "El cuerpo humano brilla en la oscuridad, pero muy poco para verlo."
 ];
 
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-// ---------- RELOJ Y SALUDO ----------
+// ---------- RELOJ Y COLOR CARITA ----------
 function actualizarReloj() {
   var ahora = new Date();
   document.getElementById('clock').innerHTML = pad(ahora.getHours()) + ':' + pad(ahora.getMinutes()) + '<span class="seconds">:' + pad(ahora.getSeconds()) + '</span>';
@@ -262,18 +287,13 @@ function actualizarReloj() {
   else if (h >= 12 && h < 20) face.classList.add('tarde');
   else face.classList.add('noche');
 
-  // Contador
   var hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
   var meta = new Date(EVENTO_FUTURO.anio, EVENTO_FUTURO.mes, EVENTO_FUTURO.dia);
   var diffDias = Math.ceil((meta - hoy) / (1000 * 60 * 60 * 24));
-  if (diffDias > 0) {
-    document.getElementById('countdown').textContent = 'Faltan ' + diffDias + ' días para ' + EVENTO_FUTURO.texto;
-  } else {
-    document.getElementById('countdown').textContent = '';
-  }
+  if (diffDias > 0) document.getElementById('countdown').textContent = 'Faltan ' + diffDias + ' días para ' + EVENTO_FUTURO.texto;
 }
 
-// ---------- VOZ ----------
+// ---------- VOZ (CON RESPALDO PARA FIRE OS) ----------
 var vozDisponible = false, vozElegida = null;
 if (window.speechSynthesis) {
   vozDisponible = true;
@@ -289,24 +309,27 @@ function hablar(texto) {
     u.onstart = function() { document.getElementById('face').classList.add('speaking'); };
     u.onend = function() { document.getElementById('face').classList.remove('speaking'); };
     u.onerror = function() { document.getElementById('face').classList.remove('speaking'); };
+    
+    // TRUCO FIRE OS: A veces necesita un empujoncito extra
     speechSynthesis.speak(u);
+    setTimeout(function(){ speechSynthesis.resume(); }, 500);
+    
   } catch(e) {}
 }
+
 function decirHola() {
   var h = new Date().getHours();
   var saludo = "¡Hola Arwen! ";
-  if (h < 12) saludo += "¡Buenos días!";
-  else if (h < 20) saludo += "¡Buenas tardes!";
-  else saludo += "¡Buenas noches!";
+  if (h < 12) saludo += "¡Buenos días! ¿Cómo estás?";
+  else if (h < 20) saludo += "¡Buenas tardes! ¿Cómo estás?";
+  else saludo += "¡Buenas noches! ¿Cómo estás?";
   hablar(saludo);
 }
 
 // ---------- MODO DESCANSO ----------
 function toggleSleep() {
   document.body.classList.toggle('sleep-mode');
-  if (!document.body.classList.contains('sleep-mode')) {
-    decirHola();
-  }
+  if (!document.body.classList.contains('sleep-mode')) decirHola();
 }
 
 // ---------- BATERÍA ----------
@@ -318,9 +341,7 @@ function actualizarBateria() {
         var bar = document.getElementById('battery-level'), text = document.getElementById('battery-text');
         if(bar && text) {
           bar.style.width = level + '%'; text.textContent = level + '%';
-          if (level > 50) bar.style.background = '#4ade80';
-          else if (level > 20) bar.style.background = '#fbbf24';
-          else bar.style.background = '#ef4444';
+          if (level > 50) bar.style.background = '#4ade80'; else if (level > 20) bar.style.background = '#fbbf24'; else bar.style.background = '#ef4444';
         }
       }
       updateAll(); battery.addEventListener('levelchange', updateAll);
@@ -330,11 +351,9 @@ function actualizarBateria() {
 
 // ---------- CLIMA ----------
 var WMO_CODES = {0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado', 45: 'Niebla', 48: 'Niebla helada', 51: 'Llovizna', 53: 'Llovizna', 55: 'Llovizna fuerte', 61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia fuerte', 71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve fuerte', 80: 'Chubascos', 81: 'Chubascos', 82: 'Chubascos fuertes', 95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte'};
-
 function actualizarClima() {
   fetch('https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON + '&current_weather=true&timezone=auto', { cache: 'no-store' })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
+    .then(function(r) { return r.json(); }).then(function(data) {
       if (data && data.current_weather) {
         document.getElementById('temp').textContent = Math.round(data.current_weather.temperature);
         document.getElementById('weather-desc').textContent = WMO_CODES[data.current_weather.weathercode] || 'Despejado';
@@ -362,85 +381,4 @@ function parsearICS(texto) {
     else if (l === 'END:VEVENT') { if (actual.start && actual.summary) eventos.push(actual); dentro = false; }
     else if (dentro) {
       if (l.indexOf('STATUS:CANCELLED') === 0) actual.cancelado = true;
-      if (l.indexOf('DTSTART') === 0) { var p = parseICSDate(l.split(':')[1]); if(p) { actual.start = p.date; actual.allDay = p.allDay; } }
-      if (l.indexOf('SUMMARY:') === 0) actual.summary = l.substr(8).trim().replace(/\\,/g, ',');
-    }
-  }
-  return eventos;
-}
-var eventosCache = [];
-function cargarCalendario() {
-  fetch(ICS_URL, { cache: 'no-store' }).then(function(r) { return r.text(); }).then(function(texto) {
-    eventosCache = parsearICS(texto).filter(function(e) { return !e.cancelado; });
-    eventosCache.sort(function(a, b) { return a.start - b.start; });
-    renderizarEventos(); comprobarAvisos();
-  }).catch(function() { document.getElementById('events-list').innerHTML = '<li class="empty">No se pudo cargar el calendario</li>'; });
-}
-function renderizarEventos() {
-  var lista = document.getElementById('events-list'), ahora = new Date(), proximos = [];
-  for (var i = 0; i < eventosCache.length; i++) {
-    var ev = eventosCache[i], fin = new Date(ev.start.getTime());
-    if (ev.allDay) fin.setHours(23, 59, 59); else fin.setHours(fin.getHours() + 1);
-    if (fin >= ahora) { proximos.push(ev); if (proximos.length >= 5) break; }
-  }
-  if (proximos.length === 0) { lista.innerHTML = '<li class="empty">Sin eventos próximos</li>'; return; }
-  var html = '';
-  for (var j = 0; j < proximos.length; j++) {
-    var e = proximos[j], d = e.start, h = pad(d.getHours()) + ':' + pad(d.getMinutes()), dia = DIAS_CORTOS[d.getDay()] + ' ' + d.getDate();
-    if (e.allDay) h = 'Todo el día';
-    else if (d.toDateString() === ahora.toDateString()) dia = 'Hoy';
-    else { var m = new Date(ahora); m.setDate(m.getDate()+1); if(d.toDateString() === m.toDateString()) dia = 'Mañana'; }
-    html += '<li class="event-item' + (e.allDay ? ' all-day' : '') + '"><div class="event-time"><span class="day">'+dia+'</span>'+h+'</div><div class="event-title">'+e.summary+'</div></li>';
-  }
-  lista.innerHTML = html;
-}
-
-// ---------- AVISOS ----------
-var avisosHechos = {};
-function comprobarAvisos() {
-  if (!vozDisponible) return;
-  var ahora = new Date(), umbralMs = AVISO_MIN * 60 * 1000;
-  for (var i = 0; i < eventosCache.length; i++) {
-    var ev = eventosCache[i], diff = ev.start.getTime() - ahora.getTime();
-    if (!ev.allDay && diff > 0 && diff <= umbralMs) {
-      var c = ev.start.getTime() + '|' + ev.summary + '_pre';
-      if (!avisosHechos[c]) { avisosHechos[c] = true; hablar('En ' + Math.round(diff/60000) + ' minutos: ' + ev.summary); }
-    }
-    if (!ev.allDay && diff <= 0 && diff > -60000) {
-      var c2 = ev.start.getTime() + '|' + ev.summary + '_cero';
-      if (!avisosHechos[c2]) { avisosHechos[c2] = true; hablar('Atención, es la hora de: ' + ev.summary); }
-    }
-  }
-}
-
-// ---------- NOTAS Y EXTRAS ----------
-function cargarNotas() { var g = localStorage.getItem('panel_familiar_notas'); if (g !== null) document.getElementById('notes').value = g; }
-function guardarNotas() {
-  localStorage.setItem('panel_familiar_notas', document.getElementById('notes').value);
-  var hint = document.getElementById('notes-hint'); hint.textContent = 'Guardado ✓'; hint.classList.add('saved');
-  setTimeout(function() { hint.textContent = 'Se guardan automáticamente'; hint.classList.remove('saved'); }, 2000);
-}
-
-function mostrarExtras() {
-  document.getElementById('chiste-box').textContent = "😂 " + CHISTES[Math.floor(Math.random() * CHISTES.length)];
-  document.getElementById('dato-box').textContent = "💡 ¿Sabías que...? " + DATOS_CURIOSOS[Math.floor(Math.random() * DATOS_CURIOSOS.length)];
-}
-
-// ---------- ARRANQUE ----------
-function iniciar() {
-  actualizarReloj(); setInterval(actualizarReloj, 1000);
-  actualizarBateria();
-  actualizarClima(); setInterval(actualizarClima, 10 * 60 * 1000);
-  cargarCalendario(); setInterval(cargarCalendario, 5 * 60 * 1000);
-  setInterval(comprobarAvisos, 30 * 1000);
-  cargarNotas(); document.getElementById('notes').addEventListener('input', guardarNotas);
-  mostrarExtras();
-  
-  document.addEventListener('touchstart', function() {
-    if (vozDisponible) { try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e){} }
-  }, { once: true, passive: true });
-}
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
-</script>
-</body>
-</html>
+      if (l.indexOf('DTSTART') === 0) { var p = parseICSDate(l.split(
