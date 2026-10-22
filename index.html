@@ -9,28 +9,33 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body {
     width: 100%; height: 100%; overflow: hidden;
-    /* Fondo más cálido y con degradado */
     background: linear-gradient(135deg, #101b2b 0%, #1e1b3a 100%);
     color: #e8eef5;
     font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    transition: background 0.5s ease;
   }
 
-  /* MODO DESCANSO */
+  /* MODO DESCANSO (Luna) */
   body.sleep-mode { background: #000000 !important; }
   body.sleep-mode .panel { opacity: 0; pointer-events: none; }
   body.sleep-mode .wake-overlay { display: block; }
   .wake-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; cursor: pointer; }
 
-  /* DISEÑO ADAPTABLE (Vertical u Horizontal sin girar la pantalla) */
-  .panel { 
-    display: flex; 
-    flex-direction: column; 
-    height: 100vh; 
-    padding: 12px; 
-    gap: 12px; 
-    overflow-y: auto;
+  /* MODO PORTARRETRATOS (Protector de pantalla) */
+  .screensaver {
+    display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 1000; cursor: pointer; overflow: hidden;
   }
+  .screensaver.active { display: block; }
+  .screensaver img {
+    width: 100%; height: 100%; object-fit: contain; /* Mantiene la calidad y proporción */
+    position: absolute; top: 0; left: 0; opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+  }
+  .screensaver img.active { opacity: 1; }
+
+  .panel { display: flex; flex-direction: column; height: 100vh; padding: 12px; gap: 12px; overflow-y: auto; }
 
   /* PANEL SUPERIOR */
   .top-row {
@@ -41,7 +46,7 @@
     border-radius: 16px; padding: 15px 20px; border: 1px solid rgba(255,255,255,0.1);
   }
 
-  /* CARITA ANIMADA (Respira) */
+  /* CARITA ANIMADA */
   .face-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .face-container {
     width: 75px; height: 75px; background: #facc15; border-radius: 50%;
@@ -75,41 +80,28 @@
   .clock-block .clock .seconds { font-size: 25px; color: #a78bfa; }
   .clock-block .date { font-size: 16px; color: #9ca3af; margin-top: 4px; text-transform: capitalize; font-weight: 500; }
 
-  /* CLIMA Y CONTADOR */
-  .weather-block { text-align: right; min-width: 120px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+  /* CLIMA Y ALERTAS */
+  .weather-block { text-align: right; min-width: 140px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
   .weather-info .temp { font-size: 40px; font-weight: 300; color: #ffffff; line-height: 1; }
   .weather-info .temp .unit { font-size: 20px; color: #a78bfa; vertical-align: top; }
   .weather-info .desc { font-size: 13px; color: #9ca3af; text-transform: capitalize; margin-top: 2px; }
   .weather-info .city { font-size: 11px; color: #6b7280; }
-  .weather-info .countdown { font-size: 12px; color: #fbbf24; margin-top: 4px; font-weight: bold; }
+  .weather-info .alert { font-size: 11px; color: #38bdf8; margin-top: 4px; font-weight: bold; display: none; }
+  .weather-info .countdown { font-size: 12px; color: #fbbf24; margin-top: 2px; font-weight: bold; }
   .btn-sleep { font-size: 22px; background: none; border: none; cursor: pointer; opacity: 0.6; }
-
-  /* BATERÍA */
+ /* BATERÍA */
   .battery-block { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
   .battery-icon { width: 28px; height: 12px; border: 2px solid #6b7280; border-radius: 3px; position: relative; padding: 2px; }
   .battery-icon::after { content: ''; position: absolute; right: -5px; top: 2px; width: 3px; height: 4px; background: #6b7280; border-radius: 0 2px 2px 0; }
   .battery-level { height: 100%; background: #4ade80; border-radius: 1px; transition: width 0.5s, background 0.5s; }
   .battery-text { font-size: 10px; color: #9ca3af; font-weight: bold; }
 
-  /* DISEÑO INFERIOR (2 Columnas si hay espacio, 1 si es estrecho) */
-  .bottom-row { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr;
-    gap: 12px; 
-    flex: 1;
-    min-height: 0; 
-  }
+  /* DISEÑO INFERIOR */
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; min-height: 0; }
   
-  .card { 
-    background: rgba(255, 255, 255, 0.03); 
-    backdrop-filter: blur(10px);
-    border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); 
-    display: flex; flex-direction: column; min-height: 0; overflow: hidden; 
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  }
-  .card-title { font-size: 13px; font-weight: 600; color: #a78bfa; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(167, 139, 250, 0.2); flex-shrink: 0; }
+  .card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border-radius: 16px; padding: 15px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; min-height: 0; overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); }
+  .card-title { font-size: 13px; font-weight: 600; color: #a78bfa; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(167, 139, 250, 0.2); flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
 
-  /* Columna Izquierda: Eventos y Chistes */
   .left-column { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
   
   .events-card { flex: 1; }
@@ -123,9 +115,19 @@
   .empty { color: #6b7280; font-size: 14px; padding: 10px 0; font-style: italic; }
 
   /* Tarjeta de Chistes y Datos */
-  .fun-card { flex: 1; justify-content: center; text-align: center; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%); border: 1px solid rgba(251, 191, 36, 0.3); }
+  .fun-card { flex: 1; justify-content: center; text-align: center; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%); border: 1px solid rgba(251, 191, 36, 0.3); position: relative; }
   .chiste-text { font-size: 18px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 12px; }
   .dato-text { font-size: 15px; color: #c4b5fd; font-style: italic; line-height: 1.3; }
+  
+  /* Botón para contar el chiste */
+  .btn-play-chiste { 
+    position: absolute; top: 10px; right: 10px; 
+    background: #fbbf24; color: #1a2332; border: none; border-radius: 50%; 
+    width: 30px; height: 30px; font-size: 14px; font-weight: bold; cursor: pointer;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s;
+  }
+  .btn-play-chiste:active { transform: scale(0.9); }
 
   /* Columna Derecha: Notas */
   .notes-area { flex: 1; width: 100%; background: rgba(0,0,0,0.2); color: #f3f4f6; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; font-size: 16px; line-height: 1.5; font-family: inherit; resize: none; outline: none; min-height: 0; transition: border-color 0.3s; }
@@ -133,7 +135,7 @@
   .notes-hint { font-size: 11px; color: #6b7280; margin-top: 6px; text-align: right; flex-shrink: 0; transition: color 0.3s; }
   .notes-hint.saved { color: #4ade80; }
 
-  /* RESPONSIVE: Si la pantalla es vertical o pequeña */
+  /* RESPONSIVE */
   @media (max-width: 800px), (orientation: portrait) {
     .bottom-row { grid-template-columns: 1fr; }
     .left-column { flex-direction: row; flex-wrap: wrap; }
@@ -146,9 +148,20 @@
 </head>
 <body>
 
+<!-- Protector de Pantalla (Fotos) -->
+<div class="screensaver" id="screensaver" onclick="despertarPantalla()">
+  <!-- Asegúrate de que los nombres coinciden con los archivos que subas a GitHub -->
+  <img src="foto1.jpg" alt="Foto familiar 1">
+  <img src="foto2.jpg" alt="Foto familiar 2">
+  <img src="foto3.jpg" alt="Foto familiar 3">
+  <img src="foto4.jpg" alt="Foto familiar 4">
+  <img src="foto5.jpg" alt="Foto familiar 5">
+  <img src="foto6.jpg" alt="Foto familiar 6">
+</div>
+
 <div class="wake-overlay" onclick="toggleSleep()"></div>
 
-<div class="panel">
+<div class="panel" id="main-panel">
   <!-- PANEL SUPERIOR -->
   <div class="top-row">
     <div class="face-wrapper">
@@ -169,6 +182,7 @@
         <div class="temp"><span id="temp">--</span><span class="unit">°C</span></div>
         <div class="desc" id="weather-desc">Cargando...</div>
         <div class="city" id="city-name"></div>
+        <div class="alert" id="weather-alert"></div>
         <div class="countdown" id="countdown"></div>
       </div>
       <button class="btn-sleep" onclick="toggleSleep()" title="Apagar pantalla">🌙</button>
@@ -190,6 +204,7 @@
       </div>
       
       <div class="card fun-card">
+        <button class="btn-play-chiste" onclick="contarChisteVoz()" title="Escuchar chiste">🔊</button>
         <div class="chiste-text" id="chiste-box">Cargando chiste...</div>
         <div class="dato-text" id="dato-box">Cargando dato...</div>
       </div>
@@ -208,7 +223,6 @@
 /* ============================================================
    CONFIGURACIÓN
    ============================================================ */
-// Enlace de Zoho directo (el que sé que funcionó)
 var ICS_URL = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://calendar.zoho.eu/ical/0801124aaacfb956572a96ba7aff45bc0000299d45a5771512967b2d8f19afec8253e8336b5ce1ce89cf81f6dc8b643ac7f8e1cf49b45c1ca4245a0ef6cd28a117efee958e7a652117409e68ad41');
 
 var LAT = 44.8150;
@@ -223,24 +237,51 @@ var DIAS_SEMANA = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
 var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var DIAS_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
+// ---------- 40 CHISTES CON EMOJIS ----------
 var CHISTES = [
-  "¿Sabes cuál es el café más peligroso? El ex-preso.", "Aro, aro, aro... ¿Quién quiere que le cuente un chiste?",
-  "Jaimito, ¿qué es un polígono? Pues un loro policía.", "¿Cómo se llama el primo de un pez? El pez primo.",
-  "¿Qué le dice un semáforo a otro? No me mires que me estoy cambiando.", "Jaimito, ¿qué es la A? - La vecina del abecedario.",
-  "¿Cuál es el animal que tiene más dientes? El ratón Pérez.", "Jaimito, ¿qué es un hámster? - Un hamster... pero en grande.",
-  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies.", "¿Qué hace un pez en el agua? Pues nadar.",
-  "¿Qué le dice una pared a otra? Nos vemos en la esquina.", "Jaimito, ¿qué es una tontería? - Pues un tonel muy pequeño.",
-  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito.", "¿Qué hace una abeja en el gimnasio? Zumba.",
-  "Jaimito, ¿por qué llega tarde a clase? - Porque el cartel decía 'Cuidado con los niños'.", "¿Qué es un fantasma que no da miedo? Un fantasma respetuoso.",
-  "¿Cómo se llama el hermano del pan? El pancito.", "Jaimito, ¿qué es una letra? - Una vaca que da leche.",
-  "¿Qué hace un cocodrilo en el avión? Pues el piloto.", "¿Qué le dijo un grano a otro? Nos vemos en el barro.",
-  "¿Cómo se llama el perro que no ladra? Un perro mudo.", "Jaimito, ¿qué es un elefante? Un ratón con abrigo de piel.",
-  "¿Qué le dice un jaguar a otro? Jaguar tú?", "¿Cuál es el colmo de un jardinero? Que su hija sea una margarita.",
-  "¿Qué hace un perro con un hueso en la cabeza? Se rasca.", "Jaimito, ¿qué es el mar? Un charco muy grande.",
-  "¿Qué le dice una iguana a otra? Iguana a tu casa.", "¿Cómo se llama el hijo del rey? El príncipe.",
-  "¿Qué hace un soltero en el circo? Pues buscar novia.", "Jaimito, ¿qué es un mosquito? Un bicho que te pica y te deja marca."
+  "¿Sabes cuál es el café más peligroso? El ex-preso. ☕🚔", 
+  "Aro, aro, aro... ¿Quién quiere que le cuente un chiste? 🦜",
+  "Jaimito, ¿qué es un polígono? Pues un loro policía. 🦜👮‍♂️", 
+  "¿Cómo se llama el primo de un pez? El pez primo. 🐟",
+  "¿Qué le dice un semáforo a otro? No me mires que me estoy cambiando. 🚦", 
+  "Jaimito, ¿qué es la A? - La vecina del abecedario. 🅰️👵",
+  "¿Cuál es el animal que tiene más dientes? El ratón Pérez. 🐭🦷", 
+  "Jaimito, ¿qué es un hámster? - Un hamster... pero en grande. 🐹",
+  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies. 🦒👃", 
+  "¿Qué hace un pez en el agua? Pues nadar. 🐟🏊",
+  "¿Qué le dice una pared a otra? Nos vemos en la esquina. 🧱", 
+  "Jaimito, ¿qué es una tontería? - Pues un tonel muy pequeño. 🛢️",
+  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito. 🤿👍", 
+  "¿Qué hace una abeja en el gimnasio? Zumba. 🐝💃",
+  "Jaimito, ¿por qué llega tarde a clase? - Porque el cartel decía 'Cuidado con los niños'. 🏫🚸", 
+  "¿Qué es un fantasma que no da miedo? Un fantasma respetuoso. 👻🙏",
+  "¿Cómo se llama el hermano del pan? El pancito. 🍞", 
+  "Jaimito, ¿qué es una letra? - Una vaca que da leche. 🐄🔤",
+  "¿Qué hace un cocodrilo en el avión? Pues el piloto. 🐊✈️", 
+  "¿Qué le dijo un grano a otro? Nos vemos en el barro. 🦠🤝",
+  "¿Cómo se llama el perro que no ladra? Un perro mudo. 🐕🤐", 
+  "Jaimito, ¿qué es un elefante? Un ratón con abrigo de piel. 🐘🐭",
+  "¿Qué le dice un jaguar a otro? Jaguar tú? 🐆😏", 
+  "¿Cuál es el colmo de un jardinero? Que su hija sea una margarita. 🌻👨‍🌾",
+  "¿Qué hace un perro con un hueso en la cabeza? Se rasca. 🐕🦴", 
+  "Jaimito, ¿qué es el mar? Un charco muy grande. 🌊💧",
+  "¿Qué le dice una iguana a otra? Iguana a tu casa. 🦎🏠", 
+  "¿Cómo se llama el hijo del rey? El príncipe. 🤴",
+  "¿Qué hace un soltero en el circo? Pues buscar novia. 🤹‍♂️💍", 
+  "Jaimito, ¿qué es un mosquito? Un bicho que te pica y te deja marca. 🦟🩸",
+  "¿Qué hace una vaca en un terremoto? Leche de temblor. 🐄🥛",
+  "¿Cuál es el café más rápido? El expreso. ☕💨",
+  "¿Qué le dice un tomate a otro? Nos vemos en la ensalada. 🍅🥗",
+  "Jaimito, ¿qué es la tristeza? Pues una tarta de tres pisos. 🍰😢",
+  "¿Cómo se llama el pez que trabaja en el circo? Pez-táculo. 🐟🎪",
+  "¿Qué hace una araña en el ordenador? Navegar por la web. 🕷️💻",
+  "¿Cuál es el animal que camina con las patas en la cabeza? El piojo. 🐜🤕",
+  "¿Qué le dice un calcetín a otro? Me estás tomando el pelo. 🧦😡",
+  "¿Qué hace un fantasma en la playa? Un susto en el agua. 👻🏖️",
+  "¿Cómo se despiden los químicos? Ácido un placer. 🧪🤝"
 ];
 
+// ---------- 30 DATOS CURIOSOS ----------
 var DATOS_CURIOSOS = [
   "Los pulpos tienen tres corazones.", "Un rayo es 5 veces más caliente que la superficie del Sol.",
   "Las abejas pueden reconocer rostros humanos.", "La miel nunca se echa a perder, se puede comer milenaria.",
@@ -259,6 +300,8 @@ var DATOS_CURIOSOS = [
   "Los pingüinos le proponen matrimonio a su pareja con una piedra.", "El cuerpo humano brilla en la oscuridad, pero muy poco para verlo."
 ];
 
+var chisteActual = "";
+
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
 function actualizarReloj() {
@@ -275,7 +318,7 @@ function actualizarReloj() {
   if (diffDias > 0) document.getElementById('countdown').textContent = 'Faltan ' + diffDias + ' días para ' + EVENTO_FUTURO.texto;
 }
 
-// VOZ
+ // ---------- VOZ ----------
 var vozDisponible = false, vozElegida = null;
 if (window.speechSynthesis) {
   vozDisponible = true;
@@ -292,11 +335,9 @@ function hablar(texto) {
     u.onend = function() { document.getElementById('face').classList.remove('speaking'); };
     u.onerror = function() { document.getElementById('face').classList.remove('speaking'); };
     
-    // El truco para forzar el audio en tablets y móviles
+    // Truco para forzar el audio en tablets y móviles
     speechSynthesis.speak(u);
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-    }
+    if (window.speechSynthesis.paused) { window.speechSynthesis.resume(); }
   } catch(e) {}
 }
 function decirHola() {
@@ -305,12 +346,59 @@ function decirHola() {
   hablar(saludo);
 }
 
+function contarChisteVoz() {
+  if (chisteActual) {
+    // Quitamos los emojis para que no los lea raro
+    var textoLimpio = chisteActual.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, "");
+    hablar(textoLimpio);
+  }
+}
+
+// ---------- MODO DESCANSO (Luna) ----------
 function toggleSleep() {
   document.body.classList.toggle('sleep-mode');
   if (!document.body.classList.contains('sleep-mode')) decirHola();
+
 }
 
-// BATERÍA
+// ---------- PROTECTOR DE PANTALLA (Fotos) ----------
+var timerFotos;
+var fotos = document.querySelectorAll('.screensaver img');
+var fotoIdx = 0;
+
+function iniciarProtector() {
+  document.getElementById('screensaver').classList.add('active');
+  fotoIdx = 0;
+  fotos.forEach(f => f.classList.remove('active'));
+  fotos[fotoIdx].classList.add('active');
+  
+  clearInterval(timerFotos);
+  timerFotos = setInterval(function() {
+    fotos[fotoIdx].classList.remove('active');
+    fotoIdx = (fotoIdx + 1) % fotos.length;
+    fotos[fotoIdx].classList.add('active');
+  }, 10000); // 10 segundos
+}
+
+function despertarPantalla() {
+  document.getElementById('screensaver').classList.remove('active');
+  clearInterval(timerFotos);
+  resetearInactividad(); // Reinicia el contador
+}
+
+var tiempoInactivo;
+function resetearInactividad() {
+  clearTimeout(tiempoInactivo);
+  tiempoInactivo = setTimeout(iniciarProtector, 5 * 60 * 1000); // 5 minutos
+}
+
+// Detectar toques para reiniciar el contador
+document.addEventListener('touchstart', resetearInactividad, { passive: true });
+document.addEventListener('mousemove', resetearInactividad, { passive: true });
+document.addEventListener('click', resetearInactividad, { passive: true });
+
+
+// ---------- BATERÍA ----------
 function actualizarBateria() {
   if (navigator.getBattery) {
     navigator.getBattery().then(function(battery) {
@@ -327,20 +415,44 @@ function actualizarBateria() {
   }
 }
 
-// CLIMA
+// ---------- CLIMA CON ALERTAS ----------
 var WMO_CODES = {0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado', 45: 'Niebla', 48: 'Niebla helada', 51: 'Llovizna', 53: 'Llovizna', 55: 'Llovizna fuerte', 61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia fuerte', 71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve fuerte', 80: 'Chubascos', 81: 'Chubascos', 82: 'Chubascos fuertes', 95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte'};
+
 function actualizarClima() {
-  fetch('https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON + '&current_weather=true&timezone=auto', { cache: 'no-store' })
-    .then(function(r) { return r.json(); }).then(function(data) {
+  // Pedimos el clima actual y la previsión de las próximas horas
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON + '&current_weather=true&hourly=precipitation_probability,weathercode&timezone=auto', { cache: 'no-store' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
       if (data && data.current_weather) {
         document.getElementById('temp').textContent = Math.round(data.current_weather.temperature);
         document.getElementById('weather-desc').textContent = WMO_CODES[data.current_weather.weathercode] || 'Despejado';
         document.getElementById('city-name').textContent = CIUDAD;
+        
+        // Alerta de lluvia (miramos las próximas 8 horas)
+        var alertaBox = document.getElementById('weather-alert');
+        var vaALLover = false;
+        
+        if (data.hourly && data.hourly.precipitation_probability) {
+          var horaActual = new Date().getHours();
+          for (var i = horaActual; i < horaActual + 8; i++) {
+            if (data.hourly.precipitation_probability[i] > 50) { // Más del 50% de probabilidad
+              vaALLover = true;
+              break;
+            }
+          }
+        }
+        
+        if (vaALLover) {
+          alertaBox.textContent = "🌧️ Va a llover, ¡no olvides el paraguas!";
+          alertaBox.style.display = 'block';
+        } else {
+          alertaBox.style.display = 'none';
+        }
       }
     }).catch(function() {});
 }
 
-// CALENDARIO
+// ---------- CALENDARIO ----------
 function parseICSDate(str) {
   if (!str) return null; str = str.trim();
   if (str.length === 8) return { date: new Date(parseInt(str.substr(0,4),10), parseInt(str.substr(4,2),10)-1, parseInt(str.substr(6,2),10)), allDay: true };
@@ -417,7 +529,8 @@ function guardarNotas() {
 }
 
 function mostrarExtras() {
-  document.getElementById('chiste-box').textContent = "😂 " + CHISTES[Math.floor(Math.random() * CHISTES.length)];
+  chisteActual = CHISTES[Math.floor(Math.random() * CHISTES.length)];
+  document.getElementById('chiste-box').textContent = chisteActual;
   document.getElementById('dato-box').textContent = "💡 ¿Sabías que...? " + DATOS_CURIOSOS[Math.floor(Math.random() * DATOS_CURIOSOS.length)];
 }
 
@@ -429,15 +542,12 @@ function iniciar() {
   setInterval(comprobarAvisos, 30 * 1000);
   cargarNotas(); document.getElementById('notes').addEventListener('input', guardarNotas);
   mostrarExtras();
+  resetearInactividad(); // Inicia el contador del protector
   
   // Forzar el desbloqueo del audio al primer toque
   document.addEventListener('touchstart', function() {
     if (vozDisponible) { 
-      try { 
-        var u = new SpeechSynthesisUtterance(' '); 
-        u.volume = 0; 
-        speechSynthesis.speak(u); 
-      } catch(e){} 
+      try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e){} 
     }
   }, { once: true, passive: true });
 }
@@ -445,3 +555,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 </script>
 </body>
 </html>
+```
+
+
+
