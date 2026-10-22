@@ -16,20 +16,20 @@
     transition: background 0.5s ease;
   }
 
-  /* MODO DESCANSO (Luna) */
+  /* MODO DESCANSO */
   body.sleep-mode { background: #000000 !important; }
   body.sleep-mode .panel { opacity: 0; pointer-events: none; }
   body.sleep-mode .wake-overlay { display: block; }
   .wake-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 999; cursor: pointer; }
 
-  /* MODO PORTARRETRATOS (Protector de pantalla) */
+  /* MODO PORTARRETRATOS */
   .screensaver {
     display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: #000; z-index: 1000; cursor: pointer; overflow: hidden;
   }
   .screensaver.active { display: block; }
   .screensaver img {
-    width: 100%; height: 100%; object-fit: contain; /* Mantiene la calidad y proporción */
+    width: 100%; height: 100%; object-fit: contain;
     position: absolute; top: 0; left: 0; opacity: 0;
     transition: opacity 1.5s ease-in-out;
   }
@@ -89,7 +89,8 @@
   .weather-info .alert { font-size: 11px; color: #38bdf8; margin-top: 4px; font-weight: bold; display: none; }
   .weather-info .countdown { font-size: 12px; color: #fbbf24; margin-top: 2px; font-weight: bold; }
   .btn-sleep { font-size: 22px; background: none; border: none; cursor: pointer; opacity: 0.6; }
- /* BATERÍA */
+
+  /* BATERÍA */
   .battery-block { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
   .battery-icon { width: 28px; height: 12px; border: 2px solid #6b7280; border-radius: 3px; position: relative; padding: 2px; }
   .battery-icon::after { content: ''; position: absolute; right: -5px; top: 2px; width: 3px; height: 4px; background: #6b7280; border-radius: 0 2px 2px 0; }
@@ -150,7 +151,6 @@
 
 <!-- Protector de Pantalla (Fotos) -->
 <div class="screensaver" id="screensaver" onclick="despertarPantalla()">
-  <!-- Asegúrate de que los nombres coinciden con los archivos que subas a GitHub -->
   <img src="foto1.jpg" alt="Foto familiar 1">
   <img src="foto2.jpg" alt="Foto familiar 2">
   <img src="foto3.jpg" alt="Foto familiar 3">
@@ -220,7 +220,7 @@
 </div>
 
 <script>
-/* ============================================================
+ /* ============================================================
    CONFIGURACIÓN
    ============================================================ */
 var ICS_URL = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent('https://calendar.zoho.eu/ical/0801124aaacfb956572a96ba7aff45bc0000299d45a5771512967b2d8f19afec8253e8336b5ce1ce89cf81f6dc8b643ac7f8e1cf49b45c1ca4245a0ef6cd28a117efee958e7a652117409e68ad41');
@@ -237,48 +237,48 @@ var DIAS_SEMANA = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
 var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 var DIAS_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
-// ---------- 40 CHISTES CON EMOJIS ----------
+// ---------- 40 CHISTES CORREGIDOS Y CON SENTIDO ----------
 var CHISTES = [
-  "¿Sabes cuál es el café más peligroso? El ex-preso. ☕🚔", 
-  "Aro, aro, aro... ¿Quién quiere que le cuente un chiste? 🦜",
-  "Jaimito, ¿qué es un polígono? Pues un loro policía. 🦜👮‍♂️", 
-  "¿Cómo se llama el primo de un pez? El pez primo. 🐟",
-  "¿Qué le dice un semáforo a otro? No me mires que me estoy cambiando. 🚦", 
-  "Jaimito, ¿qué es la A? - La vecina del abecedario. 🅰️👵",
-  "¿Cuál es el animal que tiene más dientes? El ratón Pérez. 🐭🦷", 
-  "Jaimito, ¿qué es un hámster? - Un hamster... pero en grande. 🐹",
-  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies. 🦒👃", 
-  "¿Qué hace un pez en el agua? Pues nadar. 🐟🏊",
-  "¿Qué le dice una pared a otra? Nos vemos en la esquina. 🧱", 
-  "Jaimito, ¿qué es una tontería? - Pues un tonel muy pequeño. 🛢️",
-  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito. 🤿👍", 
+  "¿Cual es el pez más gracioso? El pez payaso. ",
+  "Jaimito, ¿qué es un polígono? Pues un loro policía. ",
+  "¿Qué le dice un semáforo a otro? No me mires, me estoy cambiando. 🚦",
+  "Jaimito, ¿qué es la A? - La vecina de la B. ",
+  "¿Cuál es el animal que tiene más dientes? El ratón Pérez. ",
+  "Jaimito, ¿qué es un ganster? - Un hamster, pero en grande. 🐹",
+  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies. 🦒👃",
+  "¿Qué le dice una pared a otra? Nos vemos en la esquina. 🧱",
+  "Mamá mamá,en la escuela me dicen distraído. Jaimito tu vives en la casa de al lado",
+  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito. 🤿👍",
   "¿Qué hace una abeja en el gimnasio? Zumba. 🐝💃",
-  "Jaimito, ¿por qué llega tarde a clase? - Porque el cartel decía 'Cuidado con los niños'. 🏫🚸", 
-  "¿Qué es un fantasma que no da miedo? Un fantasma respetuoso. 👻🙏",
-  "¿Cómo se llama el hermano del pan? El pancito. 🍞", 
-  "Jaimito, ¿qué es una letra? - Una vaca que da leche. 🐄🔤",
-  "¿Qué hace un cocodrilo en el avión? Pues el piloto. 🐊✈️", 
-  "¿Qué le dijo un grano a otro? Nos vemos en el barro. 🦠🤝",
-  "¿Cómo se llama el perro que no ladra? Un perro mudo. 🐕🤐", 
-  "Jaimito, ¿qué es un elefante? Un ratón con abrigo de piel. 🐘🐭",
-  "¿Qué le dice un jaguar a otro? Jaguar tú? 🐆😏", 
-  "¿Cuál es el colmo de un jardinero? Que su hija sea una margarita. 🌻👨‍🌾",
-  "¿Qué hace un perro con un hueso en la cabeza? Se rasca. 🐕🦴", 
-  "Jaimito, ¿qué es el mar? Un charco muy grande. 🌊💧",
-  "¿Qué le dice una iguana a otra? Iguana a tu casa. 🦎🏠", 
-  "¿Cómo se llama el hijo del rey? El príncipe. 🤴",
-  "¿Qué hace un soltero en el circo? Pues buscar novia. 🤹‍♂️💍", 
-  "Jaimito, ¿qué es un mosquito? Un bicho que te pica y te deja marca. 🦟🩸",
-  "¿Qué hace una vaca en un terremoto? Leche de temblor. 🐄🥛",
-  "¿Cuál es el café más rápido? El expreso. ☕💨",
-  "¿Qué le dice un tomate a otro? Nos vemos en la ensalada. 🍅🥗",
-  "Jaimito, ¿qué es la tristeza? Pues una tarta de tres pisos. 🍰😢",
-  "¿Cómo se llama el pez que trabaja en el circo? Pez-táculo. 🐟🎪",
-  "¿Qué hace una araña en el ordenador? Navegar por la web. 🕷️💻",
-  "¿Cuál es el animal que camina con las patas en la cabeza? El piojo. 🐜🤕",
-  "¿Qué le dice un calcetín a otro? Me estás tomando el pelo. 🧦😡",
-  "¿Qué hace un fantasma en la playa? Un susto en el agua. 👻🏖️",
-  "¿Cómo se despiden los químicos? Ácido un placer. 🧪🤝"
+  "Jaimito, ¿por qué llegas tarde a clase? - Porque el cartel decía 'Cuidado con los niños'. 🏫🚸",
+  "¿como lo llaman al hijo de Winnie poo? Hijo de pu",
+  "¿Cómo se llama el hermano del pan? El pancito. 🍞",
+  "¿que hace superman en el baño? se está poniendo super fume",
+  "¿Cual es el colmo de un albañil? llamarse Armando Paredes",
+  "¿Qué le dijo un grano a otro? Nos vemos en el choclo.",
+  "aro aro aro,ayer pase por tu casa ,me tiraste con una bombacha, lavate la zanja guacha",
+  "¿como se llama el hijo buenito de Superman? Super mansito",
+  "¿Qué le dice un jaguar a otro? Jaguar you? ",
+  "¿Cuál es el colmo de un jardinero? Que su hija se llame margarita. ",
+  "Mamá, mamá, ¿el abuelo está durmiendo? —No, Jaimito, solo está ensayando para siempre.",
+  "Qué hace un huérfano frente a un espejo? —Una foto familiar.",
+  "¿Que le dice una flatulencia a otra? estás pedo nado. ",
+  "Mamá, mamá, ¿puedo jugar con el abuelo? —Bueno, Jaimito, pero cuando termines lo vuelves a enterrar.",
+  "¿cual es la música preferida los tomates? la salsa",
+  "Doctor estoy enfermo,me tiro pedos y salen sin olor. a ver echese uno...pppp,si es verdad hay que operarlo. ¿del culo? . No,de la nariz",
+  "Mamá, mamá, ¿qué me vas a regalar para Navidad? —Lo mismo que el año pasado, Jaimito. ¡Pero si no me diste nada! —Por eso",
+  "¿Cuál es el café más buscado por la policía? El expreso. ",
+  "¿Qué le dice un tomate a otro? Nos vemos en la ensalada. ",
+  "Jaimito, ¿qué es la tristeza? Pues una tarta de tres pisos. ",
+  "¿Cómo se llama el pez que trabaja en el circo? Pez-táculo. ",
+  "¿Qué hace una araña en internet? Navegar por la red. 🕷️🕸️",
+  "¿Cuál es el animal que camina con las patas en la cabeza? El piojo. ",
+  "¿Qué le dice un calvo a otro pelón? Me estás tomando el pelo. ",
+  "Doctor, ¿cómo salió la operación de mi abuelo? —Digamos que ya no le va a doler nada nunca más.",
+  "¿Cómo se despiden los químicos? Ácido un placer. ",
+  "Mamá, mamá, ¡Jaimito se cayó por el balcón!¡Dios mío! ¿Y llamó a una ambulancia?. -No, cayó en silencio.",
+  "Profesora, no hice la tarea porque mi perro se la comió. —¡Pero si tu perro murió ayer! —Por eso, murió de indigestión",
+  "Mamá, tengo frío. —Pégate a la pared Jaimito, que está a 90 grados.".
 ];
 
 // ---------- 30 DATOS CURIOSOS ----------
@@ -298,6 +298,7 @@ var DATOS_CURIOSOS = [
   "Las mariposas saborean con los pies.", "Los camellos tienen tres párpados.",
   "El corazón humano late unas 100.000 veces al día.", "Un relámpago puede alcanzar los 30.000 grados.",
   "Los pingüinos le proponen matrimonio a su pareja con una piedra.", "El cuerpo humano brilla en la oscuridad, pero muy poco para verlo."
+   "Los pepines si nonse bañan se llaman quinquinchos"
 ];
 
 var chisteActual = "";
@@ -318,28 +319,22 @@ function actualizarReloj() {
   if (diffDias > 0) document.getElementById('countdown').textContent = 'Faltan ' + diffDias + ' días para ' + EVENTO_FUTURO.texto;
 }
 
- // ---------- VOZ ----------
-var vozDisponible = false, vozElegida = null;
-if (window.speechSynthesis) {
-  vozDisponible = true;
-  var loadVoices = function() { var v = speechSynthesis.getVoices(); if(v.length) { for(var i=0; i<v.length; i++){ if(v[i].lang.indexOf('es')===0){ vozElegida = v[i]; return; } } vozElegida = v[0]; } };
-  loadVoices(); speechSynthesis.onvoiceschanged = loadVoices;
-}
+// ---------- VOZ CON GOOGLE TRANSLATE API ----------
+var audioActual = null;
+
 function hablar(texto) {
-  if (!vozDisponible) return;
   try {
-    speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(texto);
-    u.lang = 'es-ES'; if (vozElegida) u.voice = vozElegida;
-    u.onstart = function() { document.getElementById('face').classList.add('speaking'); };
-    u.onend = function() { document.getElementById('face').classList.remove('speaking'); };
-    u.onerror = function() { document.getElementById('face').classList.remove('speaking'); };
-    
-    // Truco para forzar el audio en tablets y móviles
-    speechSynthesis.speak(u);
-    if (window.speechSynthesis.paused) { window.speechSynthesis.resume(); }
+    if (audioActual) { audioActual.pause(); audioActual.currentTime = 0; }
+    var textoCodificado = encodeURIComponent(texto);
+    var urlAudio = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=es&q=" + textoCodificado;
+    audioActual = new Audio(urlAudio);
+    audioActual.onplay = function() { document.getElementById('face').classList.add('speaking'); };
+    audioActual.onended = function() { document.getElementById('face').classList.remove('speaking'); };
+    audioActual.onerror = function() { document.getElementById('face').classList.remove('speaking'); };
+    audioActual.play().catch(function(e) {});
   } catch(e) {}
 }
+
 function decirHola() {
   var h = new Date().getHours(); var saludo = "¡Hola Arwen! ";
   if (h < 12) saludo += "¡Buenos días! ¿Cómo estás?"; else if (h < 20) saludo += "¡Buenas tardes! ¿Cómo estás?"; else saludo += "¡Buenas noches! ¿Cómo estás?";
@@ -348,7 +343,6 @@ function decirHola() {
 
 function contarChisteVoz() {
   if (chisteActual) {
-    // Quitamos los emojis para que no los lea raro
     var textoLimpio = chisteActual.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, "");
     hablar(textoLimpio);
   }
@@ -358,10 +352,9 @@ function contarChisteVoz() {
 function toggleSleep() {
   document.body.classList.toggle('sleep-mode');
   if (!document.body.classList.contains('sleep-mode')) decirHola();
-
 }
 
-// ---------- PROTECTOR DE PANTALLA (Fotos) ----------
+// ---------- PROTECTOR DE PANTALLA (Fotos a 30 seg) ----------
 var timerFotos;
 var fotos = document.querySelectorAll('.screensaver img');
 var fotoIdx = 0;
@@ -377,28 +370,25 @@ function iniciarProtector() {
     fotos[fotoIdx].classList.remove('active');
     fotoIdx = (fotoIdx + 1) % fotos.length;
     fotos[fotoIdx].classList.add('active');
-  }, 10000); // 10 segundos
+  }, 30000);
 }
 
 function despertarPantalla() {
   document.getElementById('screensaver').classList.remove('active');
   clearInterval(timerFotos);
-  resetearInactividad(); // Reinicia el contador
+  resetearInactividad();
 }
 
 var tiempoInactivo;
 function resetearInactividad() {
   clearTimeout(tiempoInactivo);
-  tiempoInactivo = setTimeout(iniciarProtector, 5 * 60 * 1000); // 5 minutos
+  tiempoInactivo = setTimeout(iniciarProtector, 5 * 60 * 1000);
 }
 
-// Detectar toques para reiniciar el contador
 document.addEventListener('touchstart', resetearInactividad, { passive: true });
 document.addEventListener('mousemove', resetearInactividad, { passive: true });
 document.addEventListener('click', resetearInactividad, { passive: true });
-
-
-// ---------- BATERÍA ----------
+ // ---------- BATERÍA ----------
 function actualizarBateria() {
   if (navigator.getBattery) {
     navigator.getBattery().then(function(battery) {
@@ -419,7 +409,6 @@ function actualizarBateria() {
 var WMO_CODES = {0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado', 45: 'Niebla', 48: 'Niebla helada', 51: 'Llovizna', 53: 'Llovizna', 55: 'Llovizna fuerte', 61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia fuerte', 71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve fuerte', 80: 'Chubascos', 81: 'Chubascos', 82: 'Chubascos fuertes', 95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte'};
 
 function actualizarClima() {
-  // Pedimos el clima actual y la previsión de las próximas horas
   fetch('https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON + '&current_weather=true&hourly=precipitation_probability,weathercode&timezone=auto', { cache: 'no-store' })
     .then(function(r) { return r.json(); })
     .then(function(data) {
@@ -428,14 +417,13 @@ function actualizarClima() {
         document.getElementById('weather-desc').textContent = WMO_CODES[data.current_weather.weathercode] || 'Despejado';
         document.getElementById('city-name').textContent = CIUDAD;
         
-        // Alerta de lluvia (miramos las próximas 8 horas)
         var alertaBox = document.getElementById('weather-alert');
         var vaALLover = false;
         
         if (data.hourly && data.hourly.precipitation_probability) {
           var horaActual = new Date().getHours();
           for (var i = horaActual; i < horaActual + 8; i++) {
-            if (data.hourly.precipitation_probability[i] > 50) { // Más del 50% de probabilidad
+            if (data.hourly.precipitation_probability[i] > 50) { 
               vaALLover = true;
               break;
             }
@@ -506,7 +494,7 @@ function renderizarEventos() {
 
 var avisosHechos = {};
 function comprobarAvisos() {
-  if (!vozDisponible) return;
+  if (!audioActual) return;
   var ahora = new Date(), umbralMs = AVISO_MIN * 60 * 1000;
   for (var i = 0; i < eventosCache.length; i++) {
     var ev = eventosCache[i], diff = ev.start.getTime() - ahora.getTime();
@@ -542,12 +530,11 @@ function iniciar() {
   setInterval(comprobarAvisos, 30 * 1000);
   cargarNotas(); document.getElementById('notes').addEventListener('input', guardarNotas);
   mostrarExtras();
-  resetearInactividad(); // Inicia el contador del protector
+  resetearInactividad();
   
-  // Forzar el desbloqueo del audio al primer toque
   document.addEventListener('touchstart', function() {
-    if (vozDisponible) { 
-      try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e){} 
+    if (audioActual) { 
+      try { audioActual.play().catch(function(e){}); } catch(e){} 
     }
   }, { once: true, passive: true });
 }
@@ -555,7 +542,3 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 </script>
 </body>
 </html>
-```
-
-
-
