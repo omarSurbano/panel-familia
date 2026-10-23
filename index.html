@@ -28,8 +28,8 @@
   .face-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .face-container { width: 75px; height: 75px; background: #facc15; border-radius: 50%; position: relative; display: flex; justify-content: center; align-items: center; box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), 0 0 20px rgba(250, 204, 21, 0.3); cursor: pointer; animation: breathe 3s infinite ease-in-out; }
   .face-container:active { transform: scale(0.95); }
-  .face-container.manana { background: #fbbf24; } 
-  .face-container.tarde { background: #facc15; } 
+  .face-container.manana { background: #fbbf24; }
+  .face-container.tarde { background: #facc15; }
   .face-container.noche { background: #818cf8; box-shadow: 0 0 20px rgba(129, 140, 248, 0.4); }
   .face-container.speaking { animation: dance 0.4s infinite alternate; }
   .eyes { display: flex; gap: 15px; position: absolute; top: 22px; }
@@ -73,10 +73,13 @@
   .event-title { font-size: 15px; color: #f3f4f6; }
   .empty { color: #6b7280; font-size: 14px; padding: 10px 0; font-style: italic; }
   .fun-card { flex: 1; justify-content: center; text-align: center; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%); border: 1px solid rgba(251, 191, 36, 0.3); position: relative; }
-  .chiste-text { font-size: 18px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 12px; }
+  .fun-buttons { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; }
+  .btn-play-chiste, .btn-nuevo-chiste { border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s; }
+  .btn-play-chiste { background: #fbbf24; color: #1a2332; }
+  .btn-nuevo-chiste { background: #a78bfa; color: #1a2332; font-size: 16px; }
+  .btn-play-chiste:active, .btn-nuevo-chiste:active { transform: scale(0.9); }
+  .chiste-text { font-size: 18px; color: #fbbf24; font-weight: 500; line-height: 1.3; margin-bottom: 12px; padding-top: 28px; }
   .dato-text { font-size: 15px; color: #c4b5fd; font-style: italic; line-height: 1.3; }
-  .btn-play-chiste { position: absolute; top: 10px; right: 10px; background: #fbbf24; color: #1a2332; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s; }
-  .btn-play-chiste:active { transform: scale(0.9); }
   .notes-area { flex: 1; width: 100%; background: rgba(0,0,0,0.2); color: #f3f4f6; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; font-size: 16px; line-height: 1.5; font-family: inherit; resize: none; outline: none; min-height: 0; transition: border-color 0.3s; }
   .notes-area:focus { border-color: #a78bfa; }
   .notes-hint { font-size: 11px; color: #6b7280; margin-top: 6px; text-align: right; flex-shrink: 0; transition: color 0.3s; }
@@ -122,8 +125,7 @@
         <div class="alert" id="weather-alert"></div>
         <div class="countdown" id="countdown"></div>
       </div>
-      <button class="btn-sleep"
-       onclick="toggleSleep()" title="Apagar pantalla">🌙</button>
+      <button class="btn-sleep" onclick="toggleSleep()" title="Apagar pantalla">🌙</button>
     </div>
     <div class="battery-block">
       <div class="battery-icon"><div class="battery-level" id="battery-level" style="width: 100%;"></div></div>
@@ -137,7 +139,10 @@
         <ul class="events-list" id="events-list"><li class="empty">Cargando...</li></ul>
       </div>
       <div class="card fun-card">
-        <button class="btn-play-chiste" onclick="contarChisteVoz()" title="Escuchar chiste">🔊</button>
+        <div class="fun-buttons">
+          <button class="btn-play-chiste" onclick="contarChisteVoz()" title="Escuchar chiste">🔊</button>
+          <button class="btn-nuevo-chiste" onclick="nuevoChiste()" title="Chiste nuevo">🔄</button>
+        </div>
         <div class="chiste-text" id="chiste-box">Cargando chiste...</div>
         <div class="dato-text" id="dato-box">Cargando dato...</div>
       </div>
@@ -162,32 +167,25 @@ var DIAS_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 var CHISTES = [
   "¿Cual es el pez más gracioso? El pez payaso.",
   "Jaimito, ¿qué es un polígono? Pues un loro policía.",
-  "¿Qué le dice un semáforo a otro? No me mires, me estoy cambiando. 🚦",
-  "Jaimito, ¿qué es la A? - La vecina de la B.",
+  "¿Qué le dice un semáforo a otro? No me mires, me estoy cambiando.",
+  "Papá, papá, ¿qué se siente tener un hijo tan guapo? No sé, hijo, pregúntale a tu abuelo.",
   "¿Cuál es el animal que tiene más dientes? El ratón Pérez.",
-  "Jaimito, ¿qué es un ganster? - Un hamster, pero en grande. 🐹",
-  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies. 🦒👃",
-  "¿Qué le dice una pared a otra? Nos vemos en la esquina. 🧱",
-  "Mamá mamá,en la escuela me dicen distraído. Jaimito tu vives en la casa de al lado",
-  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito. 🤿👍",
-  "¿Qué hace una abeja en el gimnasio? Zumba. 🐝💃",
-  "Jaimito, ¿por qué llegas tarde a clase? - Porque el cartel decía 'Cuidado con los niños'. 🏫🚸",
-  "¿como lo llaman al hijo de Winnie poo? Hijo de pu",
-  "¿Cómo se llama el hermano del pan? El pancito. 🍞",
-  "¿que hace superman en el baño? se está poniendo super fume",
-  "¿Cual es el colmo de un albañil? llamarse Armando Paredes",
+  "Jaimito, ¿qué es un ganster? Un hamster, pero en grande.",
+  "¿Por qué las jirafas tienen el cuello largo? Porque huelen muy mal los pies.",
+  "¿Qué le dice una pared a otra? Nos vemos en la esquina.",
+  "Mamá mamá, en la escuela me dicen distraído. Jaimito, tú vives en la casa de al lado.",
+  "¿Cómo se llama el campeón de buceo más pequeño del mundo? Pulgarcito.",
+  "¿Qué hace una abeja en el gimnasio? Zumba.",
+  "Jaimito, ¿por qué llegas tarde a clase? Porque el cartel decía Cuidado con los niños.",
+  "¿Cómo se llama el hermano del pan? El pancito.",
+  "¿Qué hace superman en el baño? Se está poniendo super fume.",
+  "¿Cuál es el colmo de un albañil? Llamarse Armando Paredes.",
   "¿Qué le dijo un grano a otro? Nos vemos en el choclo.",
-  "aro aro aro,ayer pase por tu casa ,me tiraste con una bombacha, lavate la zanja guacha",
-  "¿como se llama el hijo buenito de Superman? Super mansito",
+  "¿Cómo se llama el hijo buenito de Superman? Super mansito.",
   "¿Qué le dice un jaguar a otro? Jaguar you?",
-  "¿Cuál es el colmo de un jardinero? Que su hija se llame margarita.",
-  "Mamá, mamá, ¿el abuelo está durmiendo? —No, Jaimito, solo está ensayando para siempre.",
-  "Qué hace un huérfano frente a un espejo? —Una foto familiar.",
-  "¿Que le dice una flatulencia a otra? estás pedo nado.",
-  "Mamá, mamá, ¿puedo jugar con el abuelo? —Bueno, Jaimito, pero cuando termines lo vuelves a enterrar.",
-  "¿cual es la música preferida los tomates? la salsa",
-  "Doctor estoy enfermo,me tiro pedos y salen sin olor. a ver echese uno...pppp,si es verdad hay que operarlo. ¿del culo? . No,de la nariz",
-  "Mamá, mamá, ¿qué me vas a regalar para Navidad? —Lo mismo que el año pasado, Jaimito. ¡Pero si no me diste nada! —Por eso",
+  "¿Cuál es el colmo de un jardinero? Que su hija se llame Margarita.",
+  "¿Qué le dice una flatulencia a otra? Estás pedo nado.",
+  "¿Cuál es la música preferida de los tomates? La salsa.",
   "¿Cuál es el café más buscado por la policía? El expreso.",
   "¿Qué le dice un tomate a otro? Nos vemos en la ensalada.",
   "Jaimito, ¿qué es la tristeza? Pues una tarta de tres pisos.",
@@ -195,73 +193,201 @@ var CHISTES = [
   "¿Qué hace una araña en internet? Navegar por la red.",
   "¿Cuál es el animal que camina con las patas en la cabeza? El piojo.",
   "¿Qué le dice un calvo a otro pelón? Me estás tomando el pelo.",
-  "Doctor, ¿cómo salió la operación de mi abuelo? —Digamos que ya no le va a doler nada nunca más.",
   "¿Cómo se despiden los químicos? Ácido un placer.",
-  "Mamá, mamá, ¡Jaimito se cayó por el balcón!¡Dios mío! ¿Y llamó a una ambulancia?. -No, cayó en silencio.",
-  "Profesora, no hice la tarea porque mi perro se la comió. —¡Pero si tu perro murió ayer! —Por eso, murió de indigestión",
-  "Mamá, tengo frío. —Pégate a la pared Jaimito, que está a 90 grados."
+  "Mamá, tengo frío. Pégate a la pared Jaimito, que está a 90 grados."
 ];
- var DATOS_CURIOSOS = ["Los pulpos tienen tres corazones.", "Un rayo es 5 veces más caliente que la superficie del Sol.", "Las abejas pueden reconocer rostros humanos.", "La miel nunca se echa a perder, se puede comer milenaria.", "El corazón de una ballena azul es del tamaño de un coche pequeño.", "Los flamencos son rosas por los camarones que comen.", "Es imposible estornudar con los ojos abiertos.", "La Tierra es el único planeta no llamado como un dios.", "Los delfines duermen con un ojo abierto.", "Las jirafas duermen solo 2 horas al día.", "El sonido no viaja en el espacio, es un vacío silencioso.", "Los plátanos son bayas, pero las fresas no.", "Un día en Venus es más largo que un año en Venus.", "Los gatos no pueden saborear lo dulce.", "El metal más abundante en la corteza terrestre es el aluminio.", "Los humanos comparten el 60% de su ADN con los plátanos.", "El ojo del avestruz es más grande que su cerebro.", "Las hormigas no tienen pulmones.", "Los tiburones existían antes que los árboles.", "El animal más ruidoso del océano es el camarón pistola.", "Las huellas dactilares de los koalas son casi idénticas a las humanas.", "Un caracol puede dormir durante 3 años.", "Los cuervos pueden recordar rostros humanos.", "El planeta más caliente no es Mercurio, es Venus.", "Las mariposas saborean con los pies.", "Los camellos tienen tres párpados.", "El corazón humano late unas 100.000 veces al día.", "Un relámpago puede alcanzar los 30.000 grados.", "Los pingüinos le proponen matrimonio a su pareja con una piedra.", "El cuerpo humano brilla en la oscuridad, pero muy poco para verlo."];
+var DATOS_CURIOSOS = ["Los pulpos tienen tres corazones.", "Un rayo es 5 veces más caliente que la superficie del Sol.", "Las abejas pueden reconocer rostros humanos.", "Si pachorro no se lava el cebo se queda sin internet.", "La miel nunca se echa a perder, se puede comer milenaria.", "El corazón de una ballena azul es del tamaño de un coche pequeño.", "Los flamencos son rosas por los camarones que comen.", "Es imposible estornudar con los ojos abiertos.", "La Tierra es el único planeta no llamado como un dios.", "Los delfines duermen con un ojo abierto.", "Las jirafas duermen solo 2 horas al día.", "El sonido no viaja en el espacio, es un vacío silencioso.", "Los plátanos son bayas, pero las fresas no.", "Un día en Venus es más largo que un año en Venus.", "Los gatos no pueden saborear lo dulce.", "El metal más abundante en la corteza terrestre es el aluminio.", "Los humanos comparten el 60% de su ADN con los plátanos.", "El ojo del avestruz es más grande que su cerebro.", "Las hormigas no tienen pulmones.", "Los tiburones existían antes que los árboles.", "El animal más ruidoso del océano es el camarón pistola.", "Las huellas dactilares de los koalas son casi idénticas a las humanas.", "Un caracol puede dormir durante 3 años.", "Los cuervos pueden recordar rostros humanos.", "El planeta más caliente no es Mercurio, es Venus.", "Las mariposas saborean con los pies.", "Los camellos tienen tres párpados.", "El corazón humano late unas 100.000 veces al día.", "Un relámpago puede alcanzar los 30.000 grados.", "Los pingüinos le proponen matrimonio a su pareja con una piedra.", "El cuerpo humano brilla en la oscuridad, pero muy poco para verlo."];
 var chisteActual = "";
+var ttsDisponible = false;
+var vocesCargadas = false;
+var vozEspanol = null;
+
 function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+// ===== TTS NATIVO (speechSynthesis) =====
+function cargarVoces() {
+  if (!window.speechSynthesis) return;
+  var voces = window.speechSynthesis.getVoices();
+  if (voces && voces.length > 0) {
+    vocesCargadas = true;
+    for (var i = 0; i < voces.length; i++) {
+      if (voces[i].lang && voces[i].lang.toLowerCase().indexOf('es') === 0) {
+        vozEspanol = voces[i];
+        break;
+      }
+    }
+    ttsDisponible = true;
+  }
+}
+if (window.speechSynthesis) {
+  cargarVoces();
+  window.speechSynthesis.onvoiceschanged = cargarVoces;
+  setTimeout(cargarVoces, 1000);
+  setTimeout(cargarVoces, 3000);
+}
+
+function limpiarTextoParaTTS(texto) {
+  return texto.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F1E0}-\u{1F1FF}]/gu, "");
+}
+
+function quitarCaraHablando() {
+  var face = document.getElementById('face');
+  if (face) face.classList.remove('speaking');
+}
+
+function hablar(texto) {
+  var limpio = limpiarTextoParaTTS(texto);
+  if (!limpio || !limpio.trim()) return;
+
+  // === 1) speechSynthesis nativo (Android TTS) ===
+  if (window.speechSynthesis && ttsDisponible) {
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(limpio);
+      u.lang = 'es-ES';
+      u.rate = 0.95;
+      u.pitch = 1.0;
+      u.volume = 1.0;
+      if (vozEspanol) u.voice = vozEspanol;
+
+      var face = document.getElementById('face');
+      u.onstart = function() { if (face) face.classList.add('speaking'); };
+      u.onend = quitarCaraHablando;
+      u.onerror = function(e) {
+        quitarCaraHablando();
+        console.warn('speechSynthesis error, probando fallback:', e);
+        hablarFallback(limpio);
+      };
+      window.speechSynthesis.speak(u);
+      return;
+    } catch(e) {
+      console.warn('speechSynthesis catch:', e);
+      quitarCaraHablando();
+    }
+  }
+
+  // === 2) Fallback: Google Translate TTS ===
+  hablarFallback(limpio);
+}
+
+var audioActual = null;
+function hablarFallback(texto) {
+  try {
+    if (audioActual) {
+      audioActual.pause();
+      audioActual.currentTime = 0;
+      audioActual = null;
+    }
+    var url = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=es&q=" + encodeURIComponent(texto);
+    audioActual = new Audio(url);
+    var face = document.getElementById('face');
+    audioActual.onplay = function() { if (face) face.classList.add('speaking'); };
+    audioActual.onended = quitarCaraHablando;
+    audioActual.onerror = function() {
+      quitarCaraHablando();
+      console.warn('Fallback Google TTS también falló');
+    };
+    var p = audioActual.play();
+    if (p && p.catch) p.catch(function(e) { console.warn('Autoplay bloqueado:', e); });
+  } catch(e) {
+    console.warn('hablarFallback catch:', e);
+  }
+}
+
+// "Prime" del TTS: un utterance mudo en el primer toque para desbloquear el audio en Fully Kiosk
+function primeTTS() {
+  if (window.speechSynthesis) {
+    try {
+      var dummy = new SpeechSynthesisUtterance(' ');
+      dummy.volume = 0.01;
+      window.speechSynthesis.speak(dummy);
+    } catch(e) {}
+  }
+  // También "prime" un Audio mudo por si acaso
+  try {
+    var silent = new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+    var p = silent.play();
+    if (p && p.catch) p.catch(function(){});
+  } catch(e) {}
+}
+
+// ===== RELOJ =====
 function actualizarReloj() {
   var ahora = new Date();
   document.getElementById('clock').innerHTML = pad(ahora.getHours()) + ':' + pad(ahora.getMinutes()) + '<span class="seconds">:' + pad(ahora.getSeconds()) + '</span>';
   document.getElementById('date').textContent = DIAS_SEMANA[ahora.getDay()] + ', ' + ahora.getDate() + ' de ' + MESES[ahora.getMonth()];
   var face = document.getElementById('face'), h = ahora.getHours();
   face.classList.remove('manana', 'tarde', 'noche');
-  if (h >= 6 && h < 12) face.classList.add('manana'); else if (h >= 12 && h < 20) face.classList.add('tarde'); else face.classList.add('noche');
+  if (h >= 6 && h < 12) face.classList.add('manana');
+  else if (h >= 12 && h < 20) face.classList.add('tarde');
+  else face.classList.add('noche');
   var hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
   var meta = new Date(EVENTO_FUTURO.anio, EVENTO_FUTURO.mes, EVENTO_FUTURO.dia);
   var diffDias = Math.ceil((meta - hoy) / (1000 * 60 * 60 * 24));
   if (diffDias > 0) document.getElementById('countdown').textContent = 'Faltan ' + diffDias + ' días para ' + EVENTO_FUTURO.texto;
 }
-var audioActual = null;
-function hablar(texto) {
-  try {
-    if (audioActual) { audioActual.pause(); audioActual.currentTime = 0; }
-    var textoCodificado = encodeURIComponent(texto);
-    var urlAudio = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=es&q=" + textoCodificado;
-    audioActual = new Audio(urlAudio);
-    audioActual.onplay = function() { document.getElementById('face').classList.add('speaking'); };
-    audioActual.onended = function() { document.getElementById('face').classList.remove('speaking'); };
-    audioActual.onerror = function() { document.getElementById('face').classList.remove('speaking'); };
-    audioActual.play().catch(function(e) {});
-  } catch(e) {}
-}
+
+// ===== SALUDOS Y CHISTES =====
 function decirHola() {
-  var h = new Date().getHours(); var saludo = "¡Hola Arwen! ";
-  if (h < 12) saludo += "¡Buenos días! ¿Cómo estás?"; else if (h < 20) saludo += "¡Buenas tardes! ¿Cómo estás?"; else saludo += "¡Buenas noches! ¿Cómo estás?";
+  var h = new Date().getHours();
+  var saludo = "¡Hola Arwen! ";
+  if (h < 12) saludo += "¡Buenos días! ¿Cómo estás?";
+  else if (h < 20) saludo += "¡Buenas tardes! ¿Cómo estás?";
+  else saludo += "¡Buenas noches! ¿Cómo estás?";
   hablar(saludo);
 }
+
 function contarChisteVoz() {
-  if (chisteActual) {
-    var textoLimpio = chisteActual.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, "");
-    hablar(textoLimpio);
-  }
+  if (chisteActual) hablar(chisteActual);
 }
+
+function nuevoChiste() {
+  var nuevo = chisteActual;
+  var intentos = 0;
+  // Evitar que salga el mismo chiste seguido
+  while (nuevo === chisteActual && CHISTES.length > 1 && intentos < 10) {
+    nuevo = CHISTES[Math.floor(Math.random() * CHISTES.length)];
+    intentos++;
+  }
+  chisteActual = nuevo;
+  document.getElementById('chiste-box').textContent = chisteActual;
+  document.getElementById('dato-box').textContent = "💡 ¿Sabías que...? " + DATOS_CURIOSOS[Math.floor(Math.random() * DATOS_CURIOSOS.length)];
+  hablar(chisteActual);
+}
+
+function mostrarExtras() {
+  chisteActual = CHISTES[Math.floor(Math.random() * CHISTES.length)];
+  document.getElementById('chiste-box').textContent = chisteActual;
+  document.getElementById('dato-box').textContent = "💡 ¿Sabías que...? " + DATOS_CURIOSOS[Math.floor(Math.random() * DATOS_CURIOSOS.length)];
+}
+
+// ===== SUEÑO / PANTALLA =====
 function toggleSleep() {
   document.body.classList.toggle('sleep-mode');
   if (!document.body.classList.contains('sleep-mode')) decirHola();
 }
+
 var timerFotos, fotos = document.querySelectorAll('.screensaver img'), fotoIdx = 0;
 function iniciarProtector() {
   document.getElementById('screensaver').classList.add('active');
   fotoIdx = 0;
-  fotos.forEach(f => f.classList.remove('active'));
-  fotos[fotoIdx].classList.add('active');
+  fotos.forEach(function(f) { f.classList.remove('active'); });
+  if (fotos[fotoIdx]) fotos[fotoIdx].classList.add('active');
   clearInterval(timerFotos);
   timerFotos = setInterval(function() {
+    if (!fotos.length) return;
     fotos[fotoIdx].classList.remove('active');
     fotoIdx = (fotoIdx + 1) % fotos.length;
     fotos[fotoIdx].classList.add('active');
   }, 30000);
 }
- function despertarPantalla() {
+
+function despertarPantalla() {
   document.getElementById('screensaver').classList.remove('active');
   clearInterval(timerFotos);
   resetearInactividad();
 }
+
 var tiempoInactivo;
 function resetearInactividad() {
   clearTimeout(tiempoInactivo);
@@ -270,21 +396,28 @@ function resetearInactividad() {
 document.addEventListener('touchstart', resetearInactividad, { passive: true });
 document.addEventListener('mousemove', resetearInactividad, { passive: true });
 document.addEventListener('click', resetearInactividad, { passive: true });
+
+// ===== BATERÍA =====
 function actualizarBateria() {
   if (navigator.getBattery) {
     navigator.getBattery().then(function(battery) {
       function updateAll() {
         var level = Math.round(battery.level * 100);
         var bar = document.getElementById('battery-level'), text = document.getElementById('battery-text');
-        if(bar && text) {
+        if (bar && text) {
           bar.style.width = level + '%'; text.textContent = level + '%';
-          if (level > 50) bar.style.background = '#4ade80'; else if (level > 20) bar.style.background = '#fbbf24'; else bar.style.background = '#ef4444';
+          if (level > 50) bar.style.background = '#4ade80';
+          else if (level > 20) bar.style.background = '#fbbf24';
+          else bar.style.background = '#ef4444';
         }
       }
-      updateAll(); battery.addEventListener('levelchange', updateAll);
+      updateAll();
+      battery.addEventListener('levelchange', updateAll);
     });
   }
 }
+
+// ===== CLIMA =====
 var WMO_CODES = {0: 'Despejado', 1: 'Mayormente despejado', 2: 'Parcialmente nublado', 3: 'Nublado', 45: 'Niebla', 48: 'Niebla helada', 51: 'Llovizna', 53: 'Llovizna', 55: 'Llovizna fuerte', 61: 'Lluvia ligera', 63: 'Lluvia', 65: 'Lluvia fuerte', 71: 'Nieve ligera', 73: 'Nieve', 75: 'Nieve fuerte', 80: 'Chubascos', 81: 'Chubascos', 82: 'Chubascos fuertes', 95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta fuerte'};
 function actualizarClima() {
   fetch('https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON + '&current_weather=true&hourly=precipitation_probability,weathercode&timezone=auto', { cache: 'no-store' })
@@ -301,10 +434,13 @@ function actualizarClima() {
             if (data.hourly.precipitation_probability[i] > 50) { vaALLover = true; break; }
           }
         }
-        if (vaALLover) { alertaBox.textContent = "🌧️ Va a llover, ¡no olvides el paraguas!"; alertaBox.style.display = 'block'; } else { alertaBox.style.display = 'none'; }
+        if (vaALLover) { alertaBox.textContent = "🌧️ Va a llover, ¡no olvides el paraguas!"; alertaBox.style.display = 'block'; }
+        else { alertaBox.style.display = 'none'; }
       }
     }).catch(function() {});
 }
+
+// ===== CALENDARIO =====
 function parseICSDate(str) {
   if (!str) return null; str = str.trim();
   if (str.length === 8) return { date: new Date(parseInt(str.substr(0,4),10), parseInt(str.substr(4,2),10)-1, parseInt(str.substr(6,2),10)), allDay: true };
@@ -350,14 +486,13 @@ function renderizarEventos() {
     var e = proximos[j], d = e.start, h = pad(d.getHours()) + ':' + pad(d.getMinutes()), dia = DIAS_CORTOS[d.getDay()] + ' ' + d.getDate();
     if (e.allDay) h = 'Todo el día';
     else if (d.toDateString() === ahora.toDateString()) dia = 'Hoy';
-    else { var m = new Date(ahora); m.setDate(m.getDate()+1); if(d.toDateString() === m.toDateString()) dia = 'Mañana'; }
+    else { var m = new Date(ahora); m.setDate(m.getDate()+1); if (d.toDateString() === m.toDateString()) dia = 'Mañana'; }
     html += '<li class="event-item' + (e.allDay ? ' all-day' : '') + '"><div class="event-time"><span class="day">'+dia+'</span>'+h+'</div><div class="event-title">'+e.summary+'</div></li>';
   }
   lista.innerHTML = html;
 }
 var avisosHechos = {};
 function comprobarAvisos() {
-  if (!audioActual) return;
   var ahora = new Date(), umbralMs = AVISO_MIN * 60 * 1000;
   for (var i = 0; i < eventosCache.length; i++) {
     var ev = eventosCache[i], diff = ev.start.getTime() - ahora.getTime();
@@ -371,31 +506,48 @@ function comprobarAvisos() {
     }
   }
 }
-function cargarNotas() { var g = localStorage.getItem('panel_familiar_notas'); if (g !== null) document.getElementById('notes').value = g; }
+
+// ===== NOTAS =====
+function cargarNotas() {
+  var g = localStorage.getItem('panel_familiar_notas');
+  if (g !== null) document.getElementById('notes').value = g;
+}
 function guardarNotas() {
   localStorage.setItem('panel_familiar_notas', document.getElementById('notes').value);
-  var hint = document.getElementById('notes-hint'); hint.textContent = 'Guardado ✓'; hint.classList.add('saved');
+  var hint = document.getElementById('notes-hint');
+  hint.textContent = 'Guardado ✓'; hint.classList.add('saved');
   setTimeout(function() { hint.textContent = 'Se guardan solas'; hint.classList.remove('saved'); }, 2000);
 }
-function mostrarExtras() {
-  chisteActual = CHISTES[Math.floor(Math.random() * CHISTES.length)];
-  document.getElementById('chiste-box').textContent = chisteActual;
-  document.getElementById('dato-box').textContent = "💡 ¿Sabías que...? " + DATOS_CURIOSOS[Math.floor(Math.random() * DATOS_CURIOSOS.length)];
-}
+
+// ===== INICIO =====
 function iniciar() {
   actualizarReloj(); setInterval(actualizarReloj, 1000);
   actualizarBateria();
   actualizarClima(); setInterval(actualizarClima, 10 * 60 * 1000);
   cargarCalendario(); setInterval(cargarCalendario, 5 * 60 * 1000);
   setInterval(comprobarAvisos, 30 * 1000);
-  cargarNotas(); document.getElementById('notes').addEventListener('input', guardarNotas);
+  cargarNotas();
+  document.getElementById('notes').addEventListener('input', guardarNotas);
   mostrarExtras();
   resetearInactividad();
-  document.addEventListener('touchstart', function() {
-    if (audioActual) { 
-      try { audioActual.play().catch(function(e){}); } catch(e){} 
-    }
-  }, { once: true, passive: true });
+
+  // Desbloquear audio en el primer toque (Fully Kiosk / WebView)
+  var desbloqueado = false;
+  function desbloquearAudio() {
+    if (desbloqueado) return;
+    desbloqueado = true;
+    primeTTS();
+    cargarVoces();
+    document.removeEventListener('touchstart', desbloquearAudio);
+    document.removeEventListener('click', desbloquearAudio);
+  }
+  document.addEventListener('touchstart', desbloquearAudio, { passive: true });
+  document.addEventListener('click', desbloquearAudio);
+
+  // Reintentar cargar voces cuando vuelva a estar visible
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) cargarVoces();
+  });
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
 </script>
