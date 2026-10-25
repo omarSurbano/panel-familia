@@ -102,6 +102,15 @@
   <img src="foto4.jpg" alt="Foto 4">
   <img src="foto5.jpg" alt="Foto 5">
   <img src="foto6.jpg" alt="Foto 6">
+  <img src="foto7.jpg" alt="Foto 7">
+  <img src="foto8.jpg" alt="Foto 8">
+  <img src="foto9.jpg" alt="Foto 9">
+  <img src="foto10.jpg" alt="Foto 10">
+  <img src="foto11.jpg" alt="Foto 11">
+  <img src="foto12.jpg" alt="Foto 12">
+  <img src="foto13.jpg" alt="Foto 13">
+  <img src="foto14.jpg" alt="Foto 14">
+  
 </div>
 <div class="wake-overlay" onclick="toggleSleep()"></div>
 <div class="panel" id="main-panel">
@@ -331,9 +340,9 @@ function actualizarReloj() {
 function decirHola() {
   var h = new Date().getHours();
   var saludo = "¡Hola Arwen! ";
-  if (h < 12) saludo += "¡Buenos días! ¿Cómo estás?";
-  else if (h < 20) saludo += "¡Buenas tardes! ¿Cómo estás?";
-  else saludo += "¡Buenas noches! ¿Cómo estás?";
+  if (h < 12) saludo += "¡Buenos días!¿ya te bañaste? ¿Cómo estás?";
+  else if (h < 20) saludo += "¡Buenas tardes! ¿tenés hambre? ¿Cómo estás?" ;
+  else saludo += "¡Buenas noches! cepillate los dientes amtes de dormir! ¿Cómo estás?";
   hablar(saludo);
 }
 
